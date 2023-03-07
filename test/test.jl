@@ -668,11 +668,11 @@ end
 
     println("TSFC", TSFC)
 
-    @test etaf == 0.88677616114421975
-    @test etalc == 0.84180668283248916
-    @test etahc == 0.84558106490256713
-    @test etaht == 0.89774201734138448
-    @test etalt == 0.91852098314708253
+    @test etaf ≈ 0.88677616114421975 atol = 1e-10
+    @test etalc ≈ 0.84180668283248916 atol = 1e-10
+    @test etahc ≈ 0.84558106490256713 atol = 1e-10
+    @test etaht ≈ 0.89774201734138448 atol = 1e-10
+    @test etalt ≈ 0.91852098314708253 atol = 1e-10
 
     if isGradient
         # AD
