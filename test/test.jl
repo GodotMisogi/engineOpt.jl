@@ -1,18 +1,12 @@
+using Pkg
+Pkg.activate("../engine/")
+
 using Test
 using Zygote
 using DelimitedFiles
+import engine
 
-# Case setup
-include("../gasfun.jl")
-include("../gascalc.jl")
-include("../tfan.jl")
-include("../tfmap.jl")
-include("../tfcool.jl")
-include("../tfsize.jl")
-include("../gaussn.jl")
-include("../compare.jl")
-include("../tfoper.jl")
-include("../tfcalc.jl")
+include("../engine/src/index.inc")
 
 isGradient = false
 
@@ -23,7 +17,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_N2(t1)
+    s1, h1, cp1, r1 = engine.gas_N2(t1)
 
     @test s1 == 2358.21669383134
     @test h1 == 2.43487432826e6
@@ -31,10 +25,10 @@ isGradient = false
     @test r1 == 296.94
 
     if isGradient
-        ds_dt = gradient(t1 -> gas_N2(t1)[1], t1)[1]
-        dh_dt = gradient(t1 -> gas_N2(t1)[2], t1)[1]
-        dcp_dt = gradient(t1 -> gas_N2(t1)[3], t1)[1]
-        dr_dt = gradient(t1 -> gas_N2(t1)[4], t1)[1]
+        ds_dt = gradient(t1 -> engine.gas_N2(t1)[1], t1)[1]
+        dh_dt = gradient(t1 -> engine.gas_N2(t1)[2], t1)[1]
+        dcp_dt = gradient(t1 -> engine.gas_N2(t1)[3], t1)[1]
+        dr_dt = gradient(t1 -> engine.gas_N2(t1)[4], t1)[1]
 
         @test ds_dt == 0.5578891260784105
         @test dh_dt == 1301.4526599999983
@@ -47,7 +41,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_Ar(t1)
+    s1, h1, cp1, r1 = engine.gas_Ar(t1)
 
     @test s1 == 1070.0677477147947
     @test h1 == 1.0582e6
@@ -59,7 +53,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_CO2(t1)
+    s1, h1, cp1, r1 = engine.gas_CO2(t1)
 
     @test s1 == 2382.871389635858
     @test h1 == -6.405596226739999e6
@@ -71,7 +65,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_H2O(t1)
+    s1, h1, cp1, r1 = engine.gas_H2O(t1)
 
     @test s1 == 4656.047912649002
     @test h1 == -8.43504044348e6
@@ -84,7 +78,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_CH4(t1)
+    s1, h1, cp1, r1 = engine.gas_CH4(t1)
 
     @test s1 == 8467.631968582504
     @test h1 == 4.574569283279987e6
@@ -97,7 +91,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_C2H6(t1)
+    s1, h1, cp1, r1 = engine.gas_C2H6(t1)
 
     @test s1 == 7408.861495898641
     @test h1 == 5.381058419279992e6
@@ -110,7 +104,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_C3H8(t1)
+    s1, h1, cp1, r1 = engine.gas_C3H8(t1)
 
     @test s1 == 7209.141132729834
     @test h1 == 6.1354732452e6
@@ -123,7 +117,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_C4H10(t1)
+    s1, h1, cp1, r1 = engine.gas_C4H10(t1)
 
     @test s1 == 7230.2763377713845
     @test h1 == 5.908308419279992e6
@@ -135,7 +129,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_C8H18(t1)
+    s1, h1, cp1, r1 = engine.gas_C8H18(t1)
 
     @test s1 == 7262.8799183106685
     @test h1 == 6.234133419279992e6
@@ -147,7 +141,7 @@ isGradient = false
     # =========================
 
     t1 = 2333.00e0
-    s1, h1, cp1, r1 = gas_C14H30(t1)
+    s1, h1, cp1, r1 = engine.gas_C14H30(t1)
 
     @test s1 == 7253.868041333698
     @test h1 == 6.369750419279992e6
@@ -162,7 +156,7 @@ isGradient = false
 
     igas = 14
     t = 2333.00e0
-    s, s_t, h, h_t, cp, r = gasfun(igas, t)
+    s, s_t, h, h_t, cp, r = engine.gasfun(igas, t)
 
     @test s == 7230.2763377713845
     @test s_t == 1.9066613119588947
@@ -174,8 +168,8 @@ isGradient = false
     if isGradient
         igas = 14
         t1 = 2333.00e0
-        ds_dt = gradient(t1 -> gasfun(igas, t1)[1], t1)[1]
-        dh_dt = gradient(t1 -> gasfun(igas, t1)[3], t1)[1]
+        ds_dt = gradient(t1 -> engine.gasfun(igas, t1)[1], t1)[1]
+        dh_dt = gradient(t1 -> engine.gasfun(igas, t1)[3], t1)[1]
 
         epsilon = 1e-6
         s_perturb, s_t_perturb, h_perturb, h_t_perturb, cp_perturb, r_perturb = gasfun(igas, t + epsilon)
@@ -192,7 +186,7 @@ isGradient = false
     # =========================
 
     igas = 13
-    nchon = gaschem(igas)
+    nchon = engine.gaschem(igas)
 
     @test nchon == [3, 8, 0, 0]
 
@@ -209,7 +203,7 @@ end
     n = 6
     n_air = n - 1
     t = 215.0
-    s, s_t, h, h_t, cp, r = gassum(alpha, n_air, t)
+    s, s_t, h, h_t, cp, r = engine.gassum(alpha, n_air, t)
 
 
     @test s == -329.0381537005463
@@ -219,7 +213,7 @@ end
     @test cp == 1007.1339608840001
     @test r == 288.29530400000004
 
-    s, s_t, h, h_t, cp, cp_t, r = gassumd(alpha, n_air, t)
+    s, s_t, h, h_t, cp, cp_t, r = engine.gassumd(alpha, n_air, t)
 
     @test s == -329.0381537005463
     @test s_t == 4.684344004111629
@@ -234,11 +228,11 @@ end
     # =========================
 
     tguess = 200.0
-    t = gas_tset(alpha, n_air, h, tguess)
+    t = engine.gas_tset(alpha, n_air, h, tguess)
 
     @test t == 214.99999914397367
 
-    t, t_hspec, t_al = gas_tsetd(alpha, n_air, h, tguess)
+    t, t_hspec, t_al = engine.gas_tsetd(alpha, n_air, h, tguess)
     @test t == 214.99999914397367
     @test t_hspec == 0.000992916572022094
     @test t_al == [85.64080275342843, 75.32364484439914, 8945.435851261927, 13490.80321923344, 42.8542796904542]
@@ -259,12 +253,12 @@ end
     # =========================
     # gas_delh, gas_delhd
     # =========================
-    s, s_t, h, h_t, cp, r = gassum(alpha, n, t)
+    s, s_t, h, h_t, cp, r = engine.gassum(alpha, n, t)
 
     delh = 10000.0
     epol = 0.99
 
-    p, t, h, s, cp, r = gas_delh(alpha, n, p, t, h, s, cp, r, delh, epol)
+    p, t, h, s, cp, r = engine.gas_delh(alpha, n, p, t, h, s, cp, r, delh, epol)
 
     @test p == 25717.186436176951
     @test t == 224.92715529368544
@@ -287,12 +281,12 @@ end
     t = 1400.0
 
 
-    f, lambda = gas_burn(alpha, beta, gamma, n, ifuel, to, tf, t)
+    f, lambda = engine.gas_burn(alpha, beta, gamma, n, ifuel, to, tf, t)
 
     @test f == -0.45350655959892078
     @test lambda[1] == 1.4291113895654686
 
-    f, lambda, f_to, f_tf, f_t, l_to, l_tf, l_t = gas_burnd(alpha, beta, gamma, n, ifuel, to, tf, t)
+    f, lambda, f_to, f_tf, f_t, l_to, l_tf, l_t = engine.gas_burnd(alpha, beta, gamma, n, ifuel, to, tf, t)
     @test f_to == 4.3531820788987320E-004
     @test f_tf == -3.2351348482849527E-004
     @test f_t == -5.1186081193040599E-004
@@ -308,12 +302,12 @@ end
     alpha = [0.781, 0.209, 0.0004, 0.0, 0.00965, 0.0]
     to = 450.0
     po = 200000.0
-    so, s_to, ho, h_to, cpo, ro = gassum(alpha, n - 1, to)
+    so, s_to, ho, h_to, cpo, ro = engine.gassum(alpha, n - 1, to)
     mo = 1.1
     m = 1.3
     epol = 0.99
 
-    p, t, h, s, cp, r = gas_mach(alpha, n - 1, po, to, ho, so, cpo, ro, mo, m, epol)
+    p, t, h, s, cp, r = engine.gas_mach(alpha, n - 1, po, to, ho, so, cpo, ro, mo, m, epol)
 
     @test p ≈ 154338.88081676030 rtol = 1e-10
     @test t ≈ 417.96446969196779 rtol = 1e-10
@@ -330,14 +324,14 @@ end
     alpha = [0.781, 0.209, 0.0004, 0.0, 0.00965, 0.0]
     to = 450.0
     po = 200000.0
-    so, s_to, ho, h_to, cpo, ro = gassum(alpha, n - 1, to)
+    so, s_to, ho, h_to, cpo, ro = engine.gassum(alpha, n - 1, to)
 
     Mguess = 1.15
     u = sqrt(1.4 * ro * to) * 1.1
     rho = (po / (ro * to))
     mflux = rho * u
 
-    p, t, h, s, cp, r = gas_mass(alpha, n - 1, po, to, ho + rho * u^2 / 2, so, cpo, ro, mflux, Mguess)
+    p, t, h, s, cp, r = engine.gas_mass(alpha, n - 1, po, to, ho + rho * u^2 / 2, so, cpo, ro, mflux, Mguess)
 
     @test p ≈ 118662.19814638462 rtol = 1e-10
     @test t ≈ 388.25628795926565 rtol = 1e-10
@@ -354,7 +348,7 @@ end
     # =========================
 
     ifuel = 13
-    gamma = gasfuel(ifuel, n)
+    gamma = engine.gasfuel(ifuel, n)
     @test gamma[2] == -3.6283226981894474
 
 end
@@ -394,7 +388,7 @@ end
     ruc = 0.4
 
     BPRc, TSFC, Fsp, hfuel, ff, mdot, Tt0, ht0, pt0, cpt0, Rt0, Tt2, ht2, pt2, cpt2, Rt2, Tt3, ht3, pt3, cpt3, Rt3, ht4, pt4, cpt4, Rt4, Tt41, ht41, pt41, cpt41, Rt41, Tt5, ht5, pt5, cpt5, Rt5, Tt7, ht7, pt7, cpt7, Rt7, u0, T6, u6, T8, u8, etaf, etac, etat =
-        tfan(gee, M0, T0, p0, Mfan, Afan,
+        engine.tfan(gee, M0, T0, p0, Mfan, Afan,
             BPR, pif, pic, pid, pib,
             Tt4, Ttf, ifuel,
             epolf, epolc, epolt,
@@ -435,7 +429,7 @@ end
     Cmap[8] = 2.5
     Cmap[9] = 15.0
 
-    Nb, Nb_pi, Nb_mb = Ncmap(pratio, mb, piD, mbD, NbD, Cmap)
+    Nb, Nb_pi, Nb_mb = engine.Ncmap(pratio, mb, piD, mbD, NbD, Cmap)
 
     @test Nb == 8.3597298887214055
     @test Nb_pi == 0.26149475347651785
@@ -466,7 +460,7 @@ end
     piK = 0.9 * pratio
     effK = 0.93
 
-    eff, eff_pi, eff_mb = ecmap(pratio, mb, piD, mbD, Cmap, effo, piK, effK)
+    eff, eff_pi, eff_mb = engine.ecmap(pratio, mb, piD, mbD, Cmap, effo, piK, effK)
 
     @test eff == 1.8781007331361292
     @test eff_pi == 0.92374562099125368
@@ -494,7 +488,7 @@ end
     Cmap[8] = 2.5
     Cmap[9] = 15.0
 
-    eff, eff_pi, eff_mb = Pimap(mb, Nb, piD, mbD, NbD, Cmap)
+    eff, eff_pi, eff_mb = engine.Pimap(mb, Nb, piD, mbD, NbD, Cmap)
 
     @test eff == 16.579462807918382
     @test eff_pi == -3.5593220338983059E-002
@@ -522,7 +516,7 @@ end
     Tmrow[1] = 1100.0
     Tmrow[2] = 1100.0
 
-    ncrow, epsrow, epsrow_Tt3, epsrow_Tt4, epsrow_Trr = mcool(ncrowx,
+    ncrow, epsrow, epsrow_Tt3, epsrow_Tt4, epsrow_Trr = engine.mcool(ncrowx,
         Tmrow, Tt3, Tt4, dTstreak, Trrat,
         efilm, tfilm, StA)
 
@@ -547,7 +541,7 @@ end
     epsrow[1] = 0.1
     epsrow[2] = 0.1
 
-    Tmrow = Tmcalc(ncrowx, ncrow,
+    Tmrow = engine.Tmcalc(ncrowx, ncrow,
         Tt3, Tt4, dTstreak, Trrat,
         efilm, tfilm, StA, epsrow)
 
@@ -556,13 +550,13 @@ end
 
     if isGradient
         # AD
-        d_Tmrow_d_Tt3 = gradient(Tt3 -> Tmcalc(ncrowx, ncrow,
+        d_Tmrow_d_Tt3 = gradient(Tt3 -> engine.Tmcalc(ncrowx, ncrow,
                 Tt3, Tt4, dTstreak, Trrat,
                 efilm, tfilm, StA, epsrow)[1], Tt3)[1]
 
         # FD
         epsilon = 1e-6
-        Tmrow_d = Tmcalc(ncrowx, ncrow,
+        Tmrow_d = engine.Tmcalc(ncrowx, ncrow,
             Tt3 + epsilon, Tt4, dTstreak, Trrat,
             efilm, tfilm, StA, epsrow)
 
@@ -656,7 +650,7 @@ end
     u9, A9, # 108
     epf, eplc, ephc, epht, eplt, # 110
     etaf, etalc, etahc, etaht, etalt, # 115
-    Lconv = tfsize(gee, M0, T0, p0, a0, M2, M25,
+    Lconv = engine.tfsize(gee, M0, T0, p0, a0, M2, M25,
         Feng, Phiinl, Kinl, iBLIc,
         BPR, pif, pilc, pihc,
         pid, pib, pifn, pitn,
@@ -682,7 +676,7 @@ end
 
     if isGradient
         # AD
-        d_etaf_dM0 = gradient(M0 -> tfsize(gee, M0, T0, p0, a0, M2, M25,
+        d_etaf_dM0 = gradient(M0 -> engine.tfsize(gee, M0, T0, p0, a0, M2, M25,
                 Feng, Phiinl, Kinl, iBLIc,
                 BPR, pif, pilc, pihc,
                 pid, pib, pifn, pitn,
@@ -700,7 +694,7 @@ end
 
         # FD
         epsilon = 1e-6
-        etaf_d = tfsize(gee, M0 + epsilon, T0, p0, a0, M2, M25,
+        etaf_d = engine.tfsize(gee, M0 + epsilon, T0, p0, a0, M2, M25,
             Feng, Phiinl, Kinl, iBLIc,
             BPR, pif, pilc, pihc,
             pid, pib, pifn, pitn,
@@ -745,7 +739,7 @@ end
     r[2, 1] = 0.78246347
     r[3, 1] = 0.10212863
 
-    r = gaussn(nsiz, nn, z, r, nrhs)
+    r = engine.gaussn(nsiz, nn, z, r, nrhs)
 
     @test r[1, 1] == -3.9352200465675033
     @test r[2, 1] == 1.1548320796061180
@@ -756,7 +750,7 @@ end
 @testset "compare.jl" begin
     num_a = 10.0
     num_d = 1.0
-    ss = compare(num_a, num_d)
+    ss = engine.compare(num_a, num_d)
 
     @test ss == "**"
 end
@@ -869,7 +863,7 @@ end
     u9, A9, # 121
     epf, eplc, ephc, epht, eplt, # 123
     etaf, etalc, etahc, etaht, etalt, # 128
-    Lconv = tfoper(gee, M0, T0, p0, a0, Tref, pref,
+    Lconv = engine.tfoper(gee, M0, T0, p0, a0, Tref, pref,
         Phiinl, Kinl, iBLIc,
         pid, pib, pifn, pitn,
         Gearf,
@@ -912,7 +906,7 @@ end
     # Very slow
     if isGradient
         M01 = M0
-        etaf_dM0 = gradient(M01 -> tfoper(gee, M01, T0, p0, a0, Tref, pref,
+        etaf_dM0 = gradient(M01 -> enginetfoper(gee, M01, T0, p0, a0, Tref, pref,
                 Phiinl, Kinl, iBLIc,
                 pid, pib, pifn, pitn,
                 Gearf,
@@ -940,21 +934,21 @@ end
 
 @testset "tfcalc.jl" begin
     pari = [24, 1, 1, 1, 1, 0, 0, 1, 1, 2]
-    parg = readdlm("../data/parg.txt")
-    pare = readdlm("../data/pare.txt")
-    para = readdlm("../data/para.txt")
+    parg = readdlm("data/parg.txt")
+    pare = readdlm("data/pare.txt")
+    para = readdlm("data/para.txt")
 
     pari_off = [24, 1, 1, 1, 1, 0, 0, 1, 1, 2]
-    parg_off = readdlm("../data/parg_off.txt")
-    pare_off = readdlm("../data/pare_off.txt")
-    para_off = readdlm("../data/para_off.txt")
+    parg_off = readdlm("data/parg_off.txt")
+    pare_off = readdlm("data/pare_off.txt")
+    para_off = readdlm("data/para_off.txt")
 
     ip = 17
     icall = 0
     icool = 1
     initeng = 1
 
-    ichoke5, ichoke7 = tfcalc!(pari, parg, para, pare, ip,
+    ichoke5, ichoke7 = engine.tfcalc!(pari, parg, para, pare, ip,
         icall, icool, initeng)
 
     @test pare[ieetaf] == 0.8867761611442198
@@ -964,7 +958,7 @@ end
     @test pare[ieetalt] == 0.9184039955965577
 
     icall = 1
-    ichoke5, ichoke7 = tfcalc!(pari_off, parg_off, para_off, pare_off, ip,
+    ichoke5, ichoke7 = engine.tfcalc!(pari_off, parg_off, para_off, pare_off, ip,
         icall, icool, initeng)
 
     @test pare_off[ieetaf] ≈ 0.8821046629543674 rtol = 1e-10
