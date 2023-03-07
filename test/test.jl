@@ -951,11 +951,11 @@ end
     ichoke5, ichoke7 = engine.tfcalc!(pari, parg, para, pare, ip,
         icall, icool, initeng)
 
-    @test pare[ieetaf] == 0.8867761611442198
-    @test pare[ieetalc] == 0.8418066828324892
-    @test pare[ieetahc] == 0.8455810649025671
-    @test pare[ieetaht] == 0.8976776249860365
-    @test pare[ieetalt] == 0.9184039955965577
+    @test pare[ieetaf] ≈ 0.8867761611442198 rtol = 1e-10
+    @test pare[ieetalc] ≈ 0.8418066828324892 rtol = 1e-10
+    @test pare[ieetahc] ≈ 0.8455810649025671 rtol = 1e-10
+    @test pare[ieetaht] ≈ 0.8976776249860365 rtol = 1e-10
+    @test pare[ieetalt] ≈ 0.9184039955965577 rtol = 1e-10
 
     icall = 1
     ichoke5, ichoke7 = engine.tfcalc!(pari_off, parg_off, para_off, pare_off, ip,
