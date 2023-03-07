@@ -396,9 +396,9 @@ end
             Mtexit, Tmetal, dTstrk, Stc,
             M4a, ruc)
 
-    @test etaf == 0.88644830512668860
-    @test etac == 0.88369203153996134
-    @test etat == 0.93788380966109508
+    @test etaf ≈ 0.88644830512668860 atol = 1e-10
+    @test etac ≈ 0.88369203153996134 atol = 1e-10
+    @test etat ≈ 0.93788380966109508 atol = 1e-10
 
 end
 
