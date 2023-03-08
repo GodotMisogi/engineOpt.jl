@@ -177,10 +177,6 @@ isGradient = false
         dh_dt_FD = (h_perturb - h) / epsilon
     end
 
-    # println([s_t, h_t]) # HACK: Not matching
-    # println([ds_dt, dh_dt])
-    # println([ds_dt_FD, dh_dt_FD])
-
     # =========================
     # gaschem
     # =========================
@@ -666,8 +662,6 @@ end
         ncrowx, ncrow,
         epsrow)
 
-    println("TSFC", TSFC)
-
     @test etaf ≈ 0.88677616114421975 atol = 1e-10
     @test etalc ≈ 0.84180668283248916 atol = 1e-10
     @test etahc ≈ 0.84558106490256713 atol = 1e-10
@@ -927,7 +921,6 @@ end
                 ncrowx, ncrow,
                 epsrow3,
                 M2, pif, pilc, pihc, mbf, mblc, mbhc, Tt4, pt5, mcore, M25)[128], M01)[1]
-        println("etaf_dM0", etaf_dM0)
     end
 
 end

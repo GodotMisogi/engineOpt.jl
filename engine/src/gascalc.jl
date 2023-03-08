@@ -497,12 +497,21 @@ function gas_burn(alpha, beta, gamma, n, ifuel, to, tf, t)
 
       f = (ha - ho) / (hf - hc)
 
-      lambda = zeros(n)
-      buf = Zygote.Buffer(lambda, length(lambda))
-      for i = 1:n
-            buf[i] = (alpha[i] + f * gamma[i]) / (1.0 + f)
-      end
-      lambda = copy(buf)
+      # lambda = zeros(n) # HACK. Dual number inconsitent with it.
+
+      # Zygote version
+      # buf = Zygote.Buffer(lambda, length(lambda))
+      # for i = 1:n
+      #       buf[i] = (alpha[i] + f * gamma[i]) / (1.0 + f)
+      # end
+      # lambda = copy(buf)
+
+      # General
+      # for i = 1:n
+      #       lambda[i] = (alpha[i] + f * gamma[i]) / (1.0 + f)
+      # end
+
+      lambda = (alpha .+ f .* gamma) .* (1 / (1.0 + f))
 
       return f, lambda
 end # gas_burn
@@ -872,27 +881,27 @@ function gasfuel(ifuel, n)
       #
       #---- store weight fractions of reaction gases, relative to fuel weight
       #-    (left side is negative, right side is positive)
-      # Zygote cannot handle this...
-      # gamma = zeros(n)
-      # for i = 1:n
-      #       gamma[i] = 0.0
-      # end
-      # gamma[in2] = wn2 / wfuel
-      # gamma[io2] = -wo2 / wfuel
-      # gamma[ico2] = wco2 / wfuel
-      # gamma[ih2o] = wh2o / wfuel
 
       gamma = zeros(n)
-      buf = Zygote.Buffer(gamma, length(gamma))
-      for i = 1:n
-            buf[i] = 0.0
-      end
-      buf[in2] = wn2 / wfuel
-      buf[io2] = -wo2 / wfuel
-      buf[ico2] = wco2 / wfuel
-      buf[ih2o] = wh2o / wfuel
 
-      gamma = copy(buf)
+      # Zygote version
+      # buf = Zygote.Buffer(gamma, length(gamma))
+      # for i = 1:n
+      #       buf[i] = 0.0
+      # end
+      # buf[in2] = wn2 / wfuel
+      # buf[io2] = -wo2 / wfuel
+      # buf[ico2] = wco2 / wfuel
+      # buf[ih2o] = wh2o / wfuel
+
+      # gamma = copy(buf)
+
+      # General version
+      gamma = zeros(n)
+      gamma[in2] = wn2 / wfuel
+      gamma[io2] = -wo2 / wfuel
+      gamma[ico2] = wco2 / wfuel
+      gamma[ih2o] = wh2o / wfuel
 
       return gamma
 end # gasfuel

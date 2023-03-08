@@ -3,6 +3,7 @@ module engine
 import Test
 import Zygote
 import DelimitedFiles
+import ForwardDiff
 
 include("gasfun.jl")
 include("gascalc.jl")

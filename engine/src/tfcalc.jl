@@ -365,9 +365,6 @@ function tfcalc!(pari, parg, para, pare, ip,
 
                 end
 
-                println("gee, M0, T0, p0, a0, Tref, pref,")
-                println([gee, M0, T0, p0, a0, Tref, pref])
-
                 Tmrow,
                 TSFC, Fsp, hfuel, ff,
                 Feng, mcore,

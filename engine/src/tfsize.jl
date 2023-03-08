@@ -182,27 +182,36 @@ function tfsize(gee, M0, T0, p0, a0, M2, M25,
       #---- set combustion-change mass fractions gamma[i] for specified fuel
       gamma = gasfuel(ifuel, n)
 
-      # Create buffer
-      buf = Zygote.Buffer(gamma, length(gamma))
-      for i = 1:length(gamma)
-            buf[i] = gamma[i]
-      end
-
       #---- apply combustor efficiency
-      # Zygote.jl can not handle this...
+      # Zygote version
+      # buf = Zygote.Buffer(gamma, length(gamma))
+      # for i = 1:length(gamma)
+      #       buf[i] = gamma[i]
+      # end
+
+      # for i = 1:nair
+      #       buf[i] = etab * buf[i]
+      # end
+      # buf[n] = 1.0 - etab
+
+      # gamma = copy(buf)
+
+      # General version
       # for i = 1:nair
       #       gamma[i] = etab * gamma[i]
       # end
       # gamma[n] = 1.0 - etab
 
-      # Zygote can handle this
-      for i = 1:nair
-            buf[i] = etab * buf[i]
+      # ForwardDiff version
+      # Convert the gamma type to dual number
+      if (typeof(etab) <: ForwardDiff.Dual)
+            gamma = convert(Array{typeof(etab)}, gamma)
       end
-      buf[n] = 1.0 - etab
+      for i = 1:nair
+            gamma[i] = etab * gamma[i]
+      end
+      gamma[n] = 1.0 - etab
 
-      gamma = copy(buf)
-      #
       # ===============================================================
       #---- freestream static quantities
       s0, dsdt, h0, dhdt, cp0, R0 = gassum(alpha, nair, T0)
@@ -438,16 +447,20 @@ function tfsize(gee, M0, T0, p0, a0, M2, M25,
                   fracm = fc / (1.0 - fo + ff)
 
                   #----- mixed constituent fraction vector from mass equation
+
+                  # Zygote version
+                  # buf = Zygote.Buffer(lambdap, length(lambdap))
+                  # for i = 1:nair
+                  #       buf[i] = frac4 * lambda[i] + fracm * alpha[i]
+                  # end
+
+                  # lambdap = copy(buf)
+
+                  # General 
                   # for i = 1:nair
                   #       lambdap[i] = frac4 * lambda[i] + fracm * alpha[i]
                   # end
-
-                  buf = Zygote.Buffer(lambdap, length(lambdap))
-                  for i = 1:nair
-                        buf[i] = frac4 * lambda[i] + fracm * alpha[i]
-                  end
-
-                  lambdap = copy(buf)
+                  lambdap = frac4 .* lambda + fracm .* alpha
 
                   #----- mixed total enthalpy from enthalpy equation
                   ht41 = frac4 * ht4 + fracm * ht3

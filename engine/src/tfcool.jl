@@ -112,8 +112,55 @@ function Tmcalc(ncrowx, ncrow,
       #
       # ==============================================================
 
-      Tmrow = zeros(ncrowx)
-      buf = Zygote.Buffer(Tmrow, length(Tmrow))
+      # Zygote
+      # Tmrow = zeros(ncrowx)
+      # buf = Zygote.Buffer(Tmrow, ncrowx)
+      # for icrow = 1:ncrow
+      #       if (icrow == 1)
+      #             Tg = Tt4 + dTstreak
+      #       else
+      #             Tg = Tt4 * Trrat^(icrow - 1)
+      #       end
+
+      #       eps = epsrow[icrow]
+      #       theta = (eps * efilm + StA * tfilm * (1.0 - efilm) * (1.0 - eps)) /
+      #               (eps * efilm + StA * (1.0 - efilm * tfilm) * (1.0 - eps))
+
+      #       # To make Zygote.jl happy
+      #       buf[icrow] = Tg - (Tg - Tt3) * theta
+      #       theta = (Tg - buf[icrow]) / (Tg - Tt3)
+
+      # end
+
+      # Tmrow = copy(buf)
+
+      # General
+      # Tmrow = zeros(ncrowx)
+      # for icrow = 1:ncrow
+      #       if (icrow == 1)
+      #             Tg = Tt4 + dTstreak
+      #       else
+      #             Tg = Tt4 * Trrat^(icrow - 1)
+      #       end
+
+      #       eps = epsrow[icrow]
+      #       theta = (eps * efilm + StA * tfilm * (1.0 - efilm) * (1.0 - eps)) /
+      #               (eps * efilm + StA * (1.0 - efilm * tfilm) * (1.0 - eps))
+
+      #       # Original code, Zygote.jl does not like it
+      #       Tmrow[icrow] = Tg - (Tg - Tt3) * theta
+      #       theta = (Tg - Tmrow[icrow]) / (Tg - Tt3)
+
+      # end
+
+      # ForwardDiff
+      if (typeof(Tt3) <: ForwardDiff.Dual || typeof(Tt4) <: ForwardDiff.Dual || typeof(dTstreak) <: ForwardDiff.Dual || typeof(Trrat) <: ForwardDiff.Dual || typeof(efilm) <: ForwardDiff.Dual || typeof(tfilm) <: ForwardDiff.Dual || typeof(StA) <: ForwardDiff.Dual || typeof(epsrow[1]) <: ForwardDiff.Dual)
+            T = ForwardDiff.Dual
+      else
+            T = typeof(Tt3)
+      end
+
+      Tmrow = zeros(T, ncrowx)
       for icrow = 1:ncrow
             if (icrow == 1)
                   Tg = Tt4 + dTstreak
@@ -126,16 +173,11 @@ function Tmcalc(ncrowx, ncrow,
                     (eps * efilm + StA * (1.0 - efilm * tfilm) * (1.0 - eps))
 
             # Original code, Zygote.jl does not like it
-            # Tmrow[icrow] = Tg - (Tg - Tt3) * theta
-            # theta = (Tg - Tmrow[icrow]) / (Tg - Tt3)
-
-            # To make Zygote.jl happy
-            buf[icrow] = Tg - (Tg - Tt3) * theta
-            theta = (Tg - buf[icrow]) / (Tg - Tt3)
+            Tmrow[icrow] = Tg - (Tg - Tt3) * theta
+            theta = (Tg - Tmrow[icrow]) / (Tg - Tt3)
 
       end
 
-      Tmrow = copy(buf)
 
       return Tmrow
 end # Tmcalc

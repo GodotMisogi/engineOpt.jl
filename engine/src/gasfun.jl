@@ -1,5 +1,3 @@
-using Zygote
-
 function gasfun(igas, t)
     #--------------------------------------------------------------------
     #     Computes properties of a thermally-perfect gas
@@ -74,46 +72,86 @@ function gaschem(igas)
     kn = 4
 
     nchon = [0, 0, 0, 0]
-    buf = Zygote.Buffer(nchon, length(nchon))
-    for i = 1:length(nchon)
-        buf[i] = nchon[i]
-    end
 
+    # Zygote
+    # buf = Zygote.Buffer(nchon, length(nchon))
+    # for i = 1:length(nchon)
+    #     buf[i] = nchon[i]
+    # end
+
+    # if (igas == 1)  #   N2
+    #     buf[kn] = 2
+    # elseif (igas == 2)  #   O2
+    #     buf[ko] = 2
+    # elseif (igas == 3)  #   CO2
+    #     buf[kc] = 1
+    #     buf[ko] = 2
+    # elseif (igas == 4)  #   H2O
+    #     buf[kh] = 2
+    #     buf[ko] = 1
+    # elseif (igas == 5)  #   Ar
+
+    # elseif (igas == 11)  #   CH4
+    #     buf[kc] = 1
+    #     buf[kh] = 4
+    # elseif (igas == 12)  #   C2H6
+    #     buf[kc] = 2
+    #     buf[kh] = 6
+    # elseif (igas == 13)  #   C3H8
+    #     buf[kc] = 3
+    #     buf[kh] = 8
+    # elseif (igas == 14)  #   C4H10
+    #     buf[kc] = 4
+    #     buf[kh] = 10
+    # elseif (igas == 18)  #   C8H18
+    #     buf[kc] = 8
+    #     buf[kh] = 18
+    # elseif (igas == 24)  #   C14H30
+    #     buf[kc] = 14
+    #     buf[kh] = 30
+    # else
+    #     println("GASFUN: undefined gas index: ", igas)
+    #     exit(code=0)
+    # end
+    # nchon = copy(buf)
+
+    # General
     if (igas == 1)  #   N2
-        buf[kn] = 2
+        nchon[kn] = 2
     elseif (igas == 2)  #   O2
-        buf[ko] = 2
+        nchon[ko] = 2
     elseif (igas == 3)  #   CO2
-        buf[kc] = 1
-        buf[ko] = 2
+        nchon[kc] = 1
+        nchon[ko] = 2
     elseif (igas == 4)  #   H2O
-        buf[kh] = 2
-        buf[ko] = 1
+        nchon[kh] = 2
+        nchon[ko] = 1
     elseif (igas == 5)  #   Ar
 
     elseif (igas == 11)  #   CH4
-        buf[kc] = 1
-        buf[kh] = 4
+        nchon[kc] = 1
+        nchon[kh] = 4
     elseif (igas == 12)  #   C2H6
-        buf[kc] = 2
-        buf[kh] = 6
+        nchon[kc] = 2
+        nchon[kh] = 6
     elseif (igas == 13)  #   C3H8
-        buf[kc] = 3
-        buf[kh] = 8
+        nchon[kc] = 3
+        nchon[kh] = 8
     elseif (igas == 14)  #   C4H10
-        buf[kc] = 4
-        buf[kh] = 10
+        nchon[kc] = 4
+        nchon[kh] = 10
     elseif (igas == 18)  #   C8H18
-        buf[kc] = 8
-        buf[kh] = 18
+        nchon[kc] = 8
+        nchon[kh] = 18
     elseif (igas == 24)  #   C14H30
-        buf[kc] = 14
-        buf[kh] = 30
+        nchon[kc] = 14
+        nchon[kh] = 30
     else
         println("GASFUN: undefined gas index: ", igas)
         exit(code=0)
     end
-    nchon = copy(buf)
+
+
     return nchon
 end # gaschem
 
