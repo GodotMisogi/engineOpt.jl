@@ -5,8 +5,6 @@ using Test
 using DelimitedFiles
 using engine
 
-include("../src/index.inc")
-
 isGradient = false
 
 @testset "gasfun.jl" begin
@@ -925,6 +923,9 @@ end
 end
 
 @testset "tfcalc.jl" begin
+
+    include("../src/index.inc")
+
     pari = [24, 1, 1, 1, 1, 0, 0, 1, 1, 2]
     parg = readdlm("data/parg.txt")
     pare = readdlm("data/pare.txt")
