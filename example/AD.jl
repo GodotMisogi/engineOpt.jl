@@ -1,5 +1,5 @@
 using Pkg
-Pkg.activate("../engine")
+Pkg.activate("../")
 Pkg.instantiate()
 
 using engine

@@ -1,12 +1,11 @@
 using Pkg
-Pkg.activate("../engine/")
+Pkg.activate("../")
 
 using Test
-using Zygote
 using DelimitedFiles
-import engine
+using engine
 
-include("../engine/src/index.inc")
+include("../src/index.inc")
 
 isGradient = false
 
