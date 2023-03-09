@@ -4,6 +4,7 @@ import Test
 import Zygote
 import DelimitedFiles
 import ForwardDiff
+using LinearAlgebra
 
 include("gasfun.jl")
 include("gascalc.jl")

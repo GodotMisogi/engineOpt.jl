@@ -1,6 +1,3 @@
-include("gasfun.jl")
-include("gascalc.jl")
-
 function tfan(gee, M0, T0, p0, Mfan, Afan,
     BPR, pif, pic, pid, pib,
     Tt4, Ttf, ifuel,
