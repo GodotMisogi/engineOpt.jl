@@ -1,19 +1,18 @@
-
+"""
+      *                                                     *
+      *   solves general nxn system in nn unknowns          *
+      *    with arbitrary number (nrhs) of righthand sides. *
+      *   assumes system is invertible...                   *
+      *    ...if it isn't, a divide by zero will result.    *
+      *                                                     *
+      *   z is the coefficient matrix...                    *
+      *     ...destroyed during solution process.           *
+      *   r is the righthand side[s]...                     *
+      *     ...replaced by the solution vector[s].          *
+      *                                                     *
+      *                              mark drela  1984       *
+"""
 function gaussn(nsiz, nn, z, r, nrhs)
-  #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^*
-  #     *                                                     *
-  #     *   solves general nxn system in nn unknowns          *
-  #     *    with arbitrary number (nrhs) of righthand sides. *
-  #     *   assumes system is invertible...                   *
-  #     *    ...if it isn't, a divide by zero will result.    *
-  #     *                                                     *
-  #     *   z is the coefficient matrix...                    *
-  #     *     ...destroyed during solution process.           *
-  #     *   r is the righthand side[s]...                     *
-  #     *     ...replaced by the solution vector[s].          *
-  #     *                                                     *
-  #     *                              mark drela  1984       *
-  #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^*
 
   for np = 1:nn-1
     np1 = np + 1

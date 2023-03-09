@@ -1,21 +1,20 @@
+"""
+    Calculates compressor or fan corrected speed as a function 
+    of pressure ratio and corrected mass flow
 
+    # Inputs
+      pratio      pressure ratio
+      mb      corrected mass flow
+      piD     design pressure ratio
+      mbD     design corrected mass flow
+      NbD     design corrected speed
+      Cmap(.) map constants
+
+    # Outputs
+      Nb    wheel speed
+      Nb_?  derivatives
+"""
 function Ncmap(pratio, mb, piD, mbD, NbD, Cmap)
-    # ==============================================================
-    #     Calculates compressor or fan corrected speed as a function 
-    #     of pressure ratio and corrected mass flow
-    #
-    #     Inputs
-    #       pratio      pressure ratio
-    #       mb      corrected mass flow
-    #       piD     design pressure ratio
-    #       mbD     design corrected mass flow
-    #       NbD     design corrected speed
-    #       Cmap(.) map constants
-    #
-    #     Outputs
-    #       Nb    wheel speed
-    #       Nb_?  derivatives
-    # ==============================================================
 
     eps = 1.0e-11
 
