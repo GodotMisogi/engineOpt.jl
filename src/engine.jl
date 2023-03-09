@@ -16,6 +16,8 @@ include("gaussn.jl")
 include("compare.jl")
 include("tfoper.jl")
 include("tfcalc.jl")
+include("index.inc")
+include("constants.inc")
 
 # Main
 export tfsize, tfoper, tfcalc!
