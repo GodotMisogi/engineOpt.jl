@@ -49,7 +49,11 @@ function gas_tsetd(alpha, n, hspec, tguess)
 
       t = tguess
 
-      t_al = zeros(n)
+      # Figure out type for ForwardDiff
+      prod = alpha[1] * hspec * tguess
+      T = typeof(prod)
+
+      t_al = zeros(T, n)
 
 
       for iter = 1:itmax
@@ -225,12 +229,17 @@ function gas_pratd(alpha, n, po, to, ho, so, cpo, ro, pratio, epol)
 
       pile = log(pratio) / epol
 
-      t_al = zeros(n)
-      h_al = zeros(n)
-      s_al = zeros(n)
-      p_al = zeros(n)
-      cp_al = zeros(n)
-      r_al = zeros(n)
+      # ForwardDiff figure out type
+      prod = alpha[1] * po * to * ho * so * cpo * ro * pratio * epol
+      T = typeof(prod)
+
+      t_al = zeros(T, n)
+      p_al = zeros(T, n)
+      h_al = zeros(T, n)
+      s_al = zeros(T, n)
+      cp_al = zeros(T, n)
+      r_al = zeros(T, n)
+
 
       dt = 0.0
       for iter = 1:itmax
@@ -294,7 +303,7 @@ function gas_pratd(alpha, n, po, to, ho, so, cpo, ro, pratio, epol)
                         t_al[i] = -res_al / res_t
                         h_al[i] = h_t * (-res_al / res_t) + hi
                         s_al[i] = s_t * (-res_al / res_t) + si
-                        p_al[i] = 0.0
+                        p_al[i] = zeros(typeof(si), 1)[1]
                         cp_al[i] = cp_t * (-res_al / res_t) + cpi
                         r_al[i] = ri
                   end
@@ -386,12 +395,16 @@ function gas_delhd(alpha, n, po, to, ho, so, cpo, ro, delh, epol)
       t = to + delh / cpo
       t = max(t, 0.2 * to)
 
-      t_al = zeros(n)
-      h_al = zeros(n)
-      s_al = zeros(n)
-      p_al = zeros(n)
-      cp_al = zeros(n)
-      r_al = zeros(n)
+      # Figure out type for ForwardDiff
+      prod = alpha[1] * po * to * ho * so * cpo * ro * delh * epol
+      T = typeof(prod)
+
+      t_al = zeros(T, n)
+      p_al = zeros(T, n)
+      h_al = zeros(T, n)
+      s_al = zeros(T, n)
+      cp_al = zeros(T, n)
+      r_al = zeros(T, n)
 
       for iter = 1:itmax
 
@@ -541,10 +554,15 @@ function gas_burnd(alpha, beta, gamma, n, ifuel, to, tf, t)
       f_t = f_ha * ha_t +
             f_hc * hc_t
 
-      lambda = zeros(n)
-      l_to = zeros(n)
-      l_tf = zeros(n)
-      l_t = zeros(n)
+      # Figure out type for ForwardDiff
+      prod = alpha[1] * beta[1] * gamma[1] * to * tf * t
+      T = typeof(prod)
+
+      lambda = zeros(T, n)
+      l_to = zeros(T, n)
+      l_tf = zeros(T, n)
+      l_t = zeros(T, n)
+
       for i = 1:n
             lambda[i] = (alpha[i] + f * gamma[i]) / (1.0 + f)
             l_f = (gamma[i] - lambda[i]) / (1.0 + f)
@@ -655,12 +673,16 @@ function gas_machd(alpha, n, po, to, ho, so, cpo, ro, mo, m, epol)
       t = to * (1.0 + 0.5 * ro / (cpo - ro) * mo^2) /
           (1.0 + 0.5 * ro / (cpo - ro) * m^2)
 
-      t_al = zeros(n)
-      p_al = zeros(n)
-      h_al = zeros(n)
-      s_al = zeros(n)
-      cp_al = zeros(n)
-      r_al = zeros(n)
+      # Determine the type for ForwardDiff
+      prod = alpha[1] * po * to * ho * so * cpo * ro * mo * m * epol
+      T = typeof(prod)
+
+      t_al = zeros(T, n)
+      p_al = zeros(T, n)
+      h_al = zeros(T, n)
+      s_al = zeros(T, n)
+      cp_al = zeros(T, n)
+      r_al = zeros(T, n)
 
       #---- Newton iteration for actual temperature
       for iter = 1:itmax

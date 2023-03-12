@@ -151,48 +151,63 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
       #---- ncrowy must be at least as big as ncrowx defined in index.inc
       ncrowy = 8
 
-      #---- Newton system arrays
-      res = zeros(9, 1)
-      a = zeros(9, 9)
-      rrel = zeros(9)
-      rsav = zeros(9)
-      asav = zeros(9, 10)
+      # Determine whether we are in AD...
+      prod = gee * M0 * T0 * p0 * a0 * Tref * pref * Phiinl * Kinl * pid * pib * pifn * pitn * Gearf
+      prod *= pifD * pilcD * pihcD * pihtD * piltD
+      prod *= mbfD * mblcD * mbhcD * mbhtD * mbltD
+      prod *= NbfD * NblcD * NbhcD * NbhtD * NbltD
+      prod *= A2 * A25 * A5 * A7
+      prod *= Ttf * ifuel * etab
+      prod *= epf0 * eplc0 * ephc0 * epht0 * eplt0
+      prod *= pifK * epfK * mofft * Pofft * Tt9 * pt9 * epsl * epsh
+      prod *= Mtexit * dTstrk * StA * efilm * tfilm
+      prod *= M4a * ruc
+      prod *= epsrow[1] * M2 * pif * pilc * pihc * mbf * mblc * mbhc * Tt4 * pt5 * mcore * M25
+      T = typeof(prod)
 
-      res_dlls = zeros(9)
-      a_dlls = zeros(9, 9)
+
+      #---- Newton system arrays
+      res = zeros(T, 9, 1)
+      a = zeros(T, 9, 9)
+      rrel = zeros(T, 9)
+      rsav = zeros(T, 9)
+      asav = zeros(T, 9, 10)
+
+      res_dlls = zeros(T, 9)
+      a_dlls = zeros(T, 9, 9)
 
 
       #---- number of gas constituents
       n = 6
 
       #---- mass fractions
-      alpha = zeros(n)    # air
-      beta = zeros(n)     # fuel
-      gamma = zeros(n)    # combustion-caused change in air
-      lambda = zeros(n)   # combustion product gas
-      lambdap = zeros(n)  # combustion product gas with cooling flow added
+      alpha = zeros(T, n)    # air
+      beta = zeros(T, n)     # fuel
+      gamma = zeros(T, n)    # combustion-caused change in air
+      lambda = zeros(T, n)   # combustion product gas
+      lambdap = zeros(T, n)  # combustion product gas with cooling flow added
 
-      lam_Tt3 = zeros(n)
-      lam_Ttf = zeros(n)
-      lam_pl = zeros(n)
-      lam_ph = zeros(n)
-      lam_ml = zeros(n)
-      lam_mh = zeros(n)
-      lam_Tb = zeros(n)
-      lamp_pl = zeros(n)
-      lamp_ph = zeros(n)
-      lamp_mf = zeros(n)
-      lamp_ml = zeros(n)
-      lamp_mh = zeros(n)
-      lamp_Tb = zeros(n)
-      lamp_Mi = zeros(n)
+      lam_Tt3 = zeros(T, n)
+      lam_Ttf = zeros(T, n)
+      lam_pl = zeros(T, n)
+      lam_ph = zeros(T, n)
+      lam_ml = zeros(T, n)
+      lam_mh = zeros(T, n)
+      lam_Tb = zeros(T, n)
+      lamp_pl = zeros(T, n)
+      lamp_ph = zeros(T, n)
+      lamp_mf = zeros(T, n)
+      lamp_ml = zeros(T, n)
+      lamp_mh = zeros(T, n)
+      lamp_Tb = zeros(T, n)
+      lamp_Mi = zeros(T, n)
 
-      T_al = zeros(n)
-      p_al = zeros(n)
-      h_al = zeros(n)
-      s_al = zeros(n)
-      R_al = zeros(n)
-      cp_al = zeros(n)
+      T_al = zeros(T, n)
+      p_al = zeros(T, n)
+      h_al = zeros(T, n)
+      s_al = zeros(T, n)
+      R_al = zeros(T, n)
+      cp_al = zeros(T, n)
 
       # from "tfmap.inc"
       #        a     b     k     mo     da    c    d     C    D
@@ -235,7 +250,11 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
       # ===============================================================
       #---- set combustion-change mass fractions gamma[i] for specified fuel
       gamma = gasfuel(ifuel, n)
-      #
+
+      # Convert type for ForwardDiff
+      if (typeof(etab) <: ForwardDiff.Dual)
+            gamma = convert(Array{typeof(etab)}, gamma)
+      end
       #---- apply combustor efficiency
       for i = 1:nair
             gamma[i] = etab * gamma[i]
@@ -1684,7 +1703,6 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
             ht49_Mi = ht49_pt45 * pt45_Mi + ht49_st45 * st45_Mi + ht49_eplt * eplt_Mi
             st49_Mi = st49_pt45 * pt45_Mi + st49_st45 * st45_Mi + st49_eplt * eplt_Mi
 
-
             for i = 1:nair
                   pt49_pl = pt49_pl + p_al[i] * lamp_pl[i]
                   Tt49_pl = Tt49_pl + T_al[i] * lamp_pl[i]
@@ -2015,16 +2033,17 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
 
             end
 
-            R5_pl = 0.0
-            R5_ph = 0.0
-            R5_mf = 0.0
-            R5_ml = 0.0
-            R5_mh = 0.0
-            R5_Tb = 0.0
-            R5_Pc = 0.0
-            R5_Mi = 0.0
+            R5_pl = zeros(T, 1)[1]
+            R5_ph = zeros(T, 1)[1]
+            R5_mf = zeros(T, 1)[1]
+            R5_ml = zeros(T, 1)[1]
+            R5_mh = zeros(T, 1)[1]
+            R5_Tb = zeros(T, 1)[1]
+            R5_Pc = zeros(T, 1)[1]
+            R5_Mi = zeros(T, 1)[1]
 
             for i = 1:nair
+
                   p5_pl = p5_pl + p_al[i] * lamp_pl[i]
                   T5_pl = T5_pl + T_al[i] * lamp_pl[i]
                   h5_pl = h5_pl + h_al[i] * lamp_pl[i]
