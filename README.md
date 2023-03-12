@@ -1,7 +1,9 @@
 # engineOpt.jl
 
 `engineOpt.jl` is a Julia-based engine conceptual design and optimization code.
-The code was developed based heavily on Drela's [TAESOPT](https://web.mit.edu/drela/Public/web/tasopt/) engine code with additional feastures:
+The code was developed based heavily on Drela's `.f77` code [TAESOPT](https://web.mit.edu/drela/Public/web/tasopt/) engine code.
+We use a converter [fort2julia](https://github.com/SichengHe/fort2julia) to expedite the transition from `.f77` code to `.jl` code; however, still quite some manual teak needs to be done after the raw conversion from `fort2julia`.
+The additional feastures of our code is:
 * Derivatives computed by the forward algorithmic differentiation (FAD) using the Julia [ForwardDiff.jl](https://juliadiff.org/ForwardDiff.jl/stable/) package. (The code is also differentiated using reverse algorithmic differentiation (RAD) using [Zygote.jl](https://github.com/FluxML/Zygote.jl).)
 *  The derivatives is used by gradient-based optimization solver which in our case we use [IPOPT](https://github.com/coin-or/Ipopt) wrapped by the Julia-based optimization package [JuMP](https://jump.dev/JuMP.jl/stable/).
 
