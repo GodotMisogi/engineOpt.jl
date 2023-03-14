@@ -961,3 +961,27 @@ end
     @test pare_off[ieetalt] ≈ 0.9182405758596454 rtol = 1e-10
 
 end
+
+@testset "tfweight.jl" begin
+
+    iengwgt = 1
+    Gearf = 1.0
+    OPR = 30.000000000000000
+    BPR = 5.0999999999999996
+    mdotc = 46.110246609262873
+    dfan = 1.3927234305722356
+    rSnace = 16.000000000000000
+    dlcomp = 0.67240459668963337
+    neng = 2.0
+    feadd = 0.10000000000000001
+    fpylon = 0.10000000000000001
+
+    Weng, Wnac, Webare, Snace1 = engine.tfweight(iengwgt, Gearf, OPR, BPR, mdotc, dfan, rSnace,
+        dlcomp, neng, feadd, fpylon)
+
+    @test Weng == 46847.51154286845
+    @test Wnac == 9411.055803345604
+    @test Webare == 30161.446412552305
+    @test Snace1 == 24.374719583103083
+
+end

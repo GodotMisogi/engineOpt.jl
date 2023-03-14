@@ -16,6 +16,7 @@ include("gaussn.jl")
 include("compare.jl")
 include("tfoper.jl")
 include("tfcalc.jl")
+include("tfweight.jl")
 include("index.inc")
 include("constants.inc")
 

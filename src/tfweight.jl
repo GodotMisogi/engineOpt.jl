@@ -25,7 +25,7 @@
 function tfweight(iengwgt, Gearf, OPR, BPR, mdotc, dfan, rSnace,
       dlcomp, neng, feadd, fpylon)
 
-      include("constants.inc")
+      # include("constants.inc")
 
       if (iengwgt > 2)
 
