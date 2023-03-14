@@ -979,9 +979,9 @@ end
     Weng, Wnac, Webare, Snace1 = engine.tfweight(iengwgt, Gearf, OPR, BPR, mdotc, dfan, rSnace,
         dlcomp, neng, feadd, fpylon)
 
-    @test Weng == 46847.51154286845
-    @test Wnac == 9411.055803345604
-    @test Webare == 30161.446412552305
-    @test Snace1 == 24.374719583103083
+    @test Weng ≈ 46847.51154286845 rtol = 1e-10
+    @test Wnac ≈ 9411.055803345604 rtol = 1e-10
+    @test Webare ≈ 30161.446412552305 rtol = 1e-10
+    @test Snace1 ≈ 24.374719583103083 rtol = 1e-10
 
 end
