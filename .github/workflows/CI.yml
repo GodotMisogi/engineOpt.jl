@@ -24,7 +24,7 @@ jobs:
       - uses: julia-actions/setup-julia@v1
         with:
           version: "1.7.3"
-      - uses: julia-actions/julia-buildpkg@master
+      - uses: julia-actions/julia-buildpkg@v1
       - run: |
           cd test
           julia --project=. test.jl
