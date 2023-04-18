@@ -96,6 +96,7 @@ function tfcalc!(pari, parg, para, pare, ip,
                 for icrow = 1:ncrowx
                         epsrow[icrow] = pare[ieepsc1+icrow-1]
                 end
+                Tmrow = zeros(ncrowx)
         elseif (icool == 2)
                 println("ERROR: icool=2 not implemented in .jl version.")
                 ncrow = ncrowx
@@ -360,7 +361,6 @@ function tfcalc!(pari, parg, para, pare, ip,
 
                 end
 
-                Tmrow,
                 TSFC, Fsp, hfuel, ff,
                 Feng, mcore,
                 pif, pilc, pihc,
@@ -389,7 +389,7 @@ function tfcalc!(pari, parg, para, pare, ip,
                 u9, A9,
                 epf, eplc, ephc, epht, eplt,
                 etaf, etalc, etahc, etaht, etalt,
-                Lconv = tfoper(gee, M0, T0, p0, a0, Tref, pref,
+                Lconv = tfoper!(gee, M0, T0, p0, a0, Tref, pref,
                         Phiinl, Kinl, iBLIc,
                         pid, pib, pifn, pitn,
                         Gearf,
@@ -408,7 +408,7 @@ function tfcalc!(pari, parg, para, pare, ip,
                         Mtexit, dTstrk, StA, efilm, tfilm,
                         M4a, ruc,
                         ncrowx, ncrow,
-                        epsrow,
+                        epsrow, Tmrow,
                         M2, pif, pilc, pihc, mbf, mblc, mbhc, Tt4, pt5, mcore, M25)
 
                 if (Lprint)

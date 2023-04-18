@@ -79,7 +79,7 @@ function mcool(ncrowx,
 
       end
 
-      println("Cooling does not work.")
+      return ncrow, epsrow, epsrow_Tt3, epsrow_Tt4, epsrow_Trr
 end # mcool
 
 function Tmcalc(ncrowx, ncrow,

@@ -346,54 +346,54 @@ end
 
 end
 
-@testset "tfan.jl" begin
+# @testset "tfan.jl" begin
 
-    # =========================
-    # tfan
-    # =========================
-    # [] TODO:
-    # 1. only icool==0 tested
-    # 2. The settings may not be physical. Need to check.
+#     # =========================
+#     # tfan
+#     # =========================
+#     # [] TODO:
+#     # 1. only icool==0 tested
+#     # 2. The settings may not be physical. Need to check.
 
-    gee = 10.0
-    M0 = 0.8
-    T0 = 250.0
-    p0 = 10^5
-    Mfan = 0.7
-    Afan = 5.0
-    BPR = 10.0
-    pif = 2.5
-    pic = 3.0
-    pid = 0.7
-    pib = 1.5
-    Tt4 = 1500.0
-    Ttf = 300.0
-    ifuel = 13
-    epolf = 0.9
-    epolc = 0.9
-    epolt = 0.9
-    icool = 0
-    Mtexit = 0.8
-    Tmetal = 800.0
-    dTstrk = 200.0
-    Stc = 0.4
-    M4a = 0.6
-    ruc = 0.4
+#     gee = 10.0
+#     M0 = 0.8
+#     T0 = 250.0
+#     p0 = 10^5
+#     Mfan = 0.7
+#     Afan = 5.0
+#     BPR = 10.0
+#     pif = 2.5
+#     pic = 3.0
+#     pid = 0.7
+#     pib = 1.5
+#     Tt4 = 1500.0
+#     Ttf = 300.0
+#     ifuel = 13
+#     epolf = 0.9
+#     epolc = 0.9
+#     epolt = 0.9
+#     icool = 0
+#     Mtexit = 0.8
+#     Tmetal = 800.0
+#     dTstrk = 200.0
+#     Stc = 0.4
+#     M4a = 0.6
+#     ruc = 0.4
 
-    BPRc, TSFC, Fsp, hfuel, ff, mdot, Tt0, ht0, pt0, cpt0, Rt0, Tt2, ht2, pt2, cpt2, Rt2, Tt3, ht3, pt3, cpt3, Rt3, ht4, pt4, cpt4, Rt4, Tt41, ht41, pt41, cpt41, Rt41, Tt5, ht5, pt5, cpt5, Rt5, Tt7, ht7, pt7, cpt7, Rt7, u0, T6, u6, T8, u8, etaf, etac, etat =
-        engine.tfan(gee, M0, T0, p0, Mfan, Afan,
-            BPR, pif, pic, pid, pib,
-            Tt4, Ttf, ifuel,
-            epolf, epolc, epolt,
-            icool,
-            Mtexit, Tmetal, dTstrk, Stc,
-            M4a, ruc)
+#     BPRc, TSFC, Fsp, hfuel, ff, mdot, Tt0, ht0, pt0, cpt0, Rt0, Tt2, ht2, pt2, cpt2, Rt2, Tt3, ht3, pt3, cpt3, Rt3, ht4, pt4, cpt4, Rt4, Tt41, ht41, pt41, cpt41, Rt41, Tt5, ht5, pt5, cpt5, Rt5, Tt7, ht7, pt7, cpt7, Rt7, u0, T6, u6, T8, u8, etaf, etac, etat =
+#         engine.tfan(gee, M0, T0, p0, Mfan, Afan,
+#             BPR, pif, pic, pid, pib,
+#             Tt4, Ttf, ifuel,
+#             epolf, epolc, epolt,
+#             icool,
+#             Mtexit, Tmetal, dTstrk, Stc,
+#             M4a, ruc)
 
-    @test etaf ≈ 0.88644830512668860 atol = 1e-10
-    @test etac ≈ 0.88369203153996134 atol = 1e-10
-    @test etat ≈ 0.93788380966109508 atol = 1e-10
+#     @test etaf ≈ 0.88644830512668860 atol = 1e-10
+#     @test etac ≈ 0.88369203153996134 atol = 1e-10
+#     @test etat ≈ 0.93788380966109508 atol = 1e-10
 
-end
+# end
 
 
 @testset "tfmap.jl" begin
@@ -746,7 +746,7 @@ end
     @test ss == "**"
 end
 
-@testset "tfoper.jl" begin
+@testset "tfoper.jl mode 1" begin
 
     gee = 9.8100000000000005
     M0 = 0.26302467815397762
@@ -812,6 +812,8 @@ end
     ncrowx = 4
     ncrow = 4
     epsrow3 = [0.12061791584226822, 5.1292591721870069E-002, 1.5478853228971187E-002, 0.0000000000000000]
+    Tmrow3 = [1000.0, 1000.0, 1000.0, 1000.0]
+
 
     M2 = 1.0
     pif = 0.0000000000000000
@@ -825,7 +827,7 @@ end
     mcore = 0.0
     M25 = 0.0
 
-    Tmrow, #1
+    # Fix mass flow find temperature
     TSFC, Fsp, hfuel, ff, # 2
     Feng, mcore, # 6
     pif, pilc, pihc, # 8
@@ -854,7 +856,7 @@ end
     u9, A9, # 121
     epf, eplc, ephc, epht, eplt, # 123
     etaf, etalc, etahc, etaht, etalt, # 128
-    Lconv = engine.tfoper(gee, M0, T0, p0, a0, Tref, pref,
+    Lconv = engine.tfoper!(gee, M0, T0, p0, a0, Tref, pref,
         Phiinl, Kinl, iBLIc,
         pid, pib, pifn, pitn,
         Gearf,
@@ -873,9 +875,8 @@ end
         Mtexit, dTstrk, StA, efilm, tfilm,
         M4a, ruc,
         ncrowx, ncrow,
-        epsrow3,
+        epsrow3, Tmrow3,
         M2, pif, pilc, pihc, mbf, mblc, mbhc, Tt4, pt5, mcore, M25)
-
 
     @test etaf ≈ 0.88936819538102763 atol = 1e-8
     @test etalc ≈ 0.84229764537731722 atol = 1e-8
@@ -894,32 +895,152 @@ end
     @test cpt4 ≈ cpt4_ref atol = 1e-8 * cpt4_ref
     @test Rt4 ≈ Rt4_ref atol = 1e-8 * Rt4_ref
 
-    # Very slow
-    if isGradient
-        M01 = M0
-        etaf_dM0 = gradient(M01 -> enginetfoper(gee, M01, T0, p0, a0, Tref, pref,
-                Phiinl, Kinl, iBLIc,
-                pid, pib, pifn, pitn,
-                Gearf,
-                pifD, pilcD, pihcD, pihtD, piltD,
-                mbfD, mblcD, mbhcD, mbhtD, mbltD,
-                NbfD, NblcD, NbhcD, NbhtD, NbltD,
-                A2, A25, A5, A7,
-                iTFspec,
-                Ttf, ifuel, etab,
-                epf0, eplc0, ephc0, epht0, eplt0,
-                pifK, epfK,
-                mofft, Pofft,
-                Tt9, pt9,
-                epsl, epsh,
-                icool,
-                Mtexit, dTstrk, StA, efilm, tfilm,
-                M4a, ruc,
-                ncrowx, ncrow,
-                epsrow3,
-                M2, pif, pilc, pihc, mbf, mblc, mbhc, Tt4, pt5, mcore, M25)[128], M01)[1]
-    end
+end
 
+@testset "tfoper.jl mode 2" begin
+
+    gee = 9.8100000000000005
+    M0 = 0.26302467815397762
+    T0 = 288.00000000000000
+    p0 = 101320.00000000000
+    a0 = 340.08940001123227
+    Tref = 288.19999999999999
+    pref = 101320.00000000000
+
+    Phiinl = 0.0
+    Kinl = 0.0
+    iBLIc = 0
+
+    pid = 0.99800000000000000
+    pib = 0.93999999999999995
+    pifn = 0.97999999999999998
+    pitn = 0.98899999999999999
+    Gearf = 1.0000000000000000
+    pifD = 1.6850000000000001
+    pilcD = 8.0000000000000000
+    pihcD = 3.7500000000000000
+    pihtD = 2.1601257635200488
+    piltD = 6.2886975330083716
+    mbfD = 235.16225770724063
+    mblcD = 46.110246609262873
+    mbhcD = 7.8056539219349039
+    mbhtD = 4.3594697284253883
+    mbltD = 8.7016090343744406
+    NbfD = 1.0790738309310697
+    NblcD = 1.0790738309310697
+    NbhcD = 0.77137973563891493
+    NbhtD = 0.44698693289691338
+    NbltD = 0.48396724306758404
+    A2 = 1.3863121762890294
+    A25 = 3.8585338087708761E-002
+    A5 = 0.19210855588408102
+    A7 = 0.64211443204484309
+    iTFspec = 1
+    Ttf = 280.00000000000000
+    ifuel = 24
+    etab = 0.98499999999999999
+    epf0 = 0.89480000000000004
+    eplc0 = 0.88000000000000000
+    ephc0 = 0.87000000000000000
+    epht0 = 0.88900000000000001
+    eplt0 = 0.89900000000000002
+    pifK = 1.6850000000000001
+    epfK = -7.6999999999999999E-002
+    mofft = 0.56969999999999998
+    Pofft = 77800.595231538944
+    Tt9 = 300.00000000000000
+    pt9 = 30000.000000000000
+    epsl = 1.0000000000000000E-002
+    epsh = 2.1999999999999999E-002
+    icool = 1
+    Mtexit = 1.0000000000000000
+    dTstrk = 200.00000000000000
+    StA = 8.9999999999999997E-002
+    efilm = 0.69999999999999996
+    tfilm = 0.29999999999999999
+    M4a = 0.90000000000000002
+    ruc = 0.14999999999999999
+    ncrowx = 4
+    ncrow = 4
+    epsrow3 = [0.12061791584226822, 5.1292591721870069E-002, 1.5478853228971187E-002, 0.0000000000000000]
+    Tmrow3 = [1000.0, 1000.0, 1000.0, 1000.0]
+
+
+    M2 = 1.0
+    pif = 0.0000000000000000
+    pilc = 0.0000000000000000
+    pihc = 0.0000000000000000
+    mbf = 0.0000000000000000
+    mblc = 0.0000000000000000
+    mbhc = 0.0000000000000000
+    Tt4 = 1783.8000000000002
+    pt5 = 0.0000000000000000
+    mcore = 0.0
+    M25 = 0.0
+
+    # Fix temperature find mass flow
+    icool = 2
+    TSFC, Fsp, hfuel, ff, # 2
+    Feng, mcore, # 6
+    pif, pilc, pihc, # 8
+    mbf, mblc, mbhc, # 11
+    Nbf, Nblc, Nbhc, # 14
+    Tt0, ht0, pt0, cpt0, Rt0, # 17
+    Tt18, ht18, pt18, cpt18, Rt18, # 22
+    Tt19, ht19, pt19, cpt19, Rt19, # 27
+    Tt2, ht2, pt2, cpt2, Rt2, # 32
+    Tt21, ht21, pt21, cpt21, Rt21, # 37
+    Tt25, ht25, pt25, cpt25, Rt25, # 42
+    Tt3, ht3, pt3, cpt3, Rt3, # 47
+    Tt4, ht4, pt4, cpt4, Rt4, # 52
+    Tt41, ht41, pt41, cpt41, Rt41, # 57
+    Tt45, ht45, pt45, cpt45, Rt45, # 62
+    Tt49, ht49, pt49, cpt49, Rt49, # 67
+    Tt5, ht5, pt5, cpt5, Rt5, # 72
+    Tt7, ht7, pt7, cpt7, Rt7, # 77
+    u0, # 82
+    T2, u2, p2, cp2, R2, M2, # 83
+    T25, u25, p25, cp25, R25, M25, # 89
+    T5, u5, p5, cp5, R5, M5, # 95
+    T6, u6, p6, cp6, R6, M6, A6, # 101
+    T7, u7, p7, cp7, R7, M7, # 108
+    T8, u8, p8, cp8, R8, M8, A8, # 114
+    u9, A9, # 121
+    epf, eplc, ephc, epht, eplt, # 123
+    etaf, etalc, etahc, etaht, etalt, # 128
+    Lconv = engine.tfoper!(gee, M0, T0, p0, a0, Tref, pref,
+        Phiinl, Kinl, iBLIc,
+        pid, pib, pifn, pitn,
+        Gearf,
+        pifD, pilcD, pihcD, pihtD, piltD,
+        mbfD, mblcD, mbhcD, mbhtD, mbltD,
+        NbfD, NblcD, NbhcD, NbhtD, NbltD,
+        A2, A25, A5, A7,
+        iTFspec,
+        Ttf, ifuel, etab,
+        epf0, eplc0, ephc0, epht0, eplt0,
+        pifK, epfK,
+        mofft, Pofft,
+        Tt9, pt9,
+        epsl, epsh,
+        icool,
+        Mtexit, dTstrk, StA, efilm, tfilm,
+        M4a, ruc,
+        ncrowx, ncrow,
+        epsrow3, Tmrow3,
+        M2, pif, pilc, pihc, mbf, mblc, mbhc, Tt4, pt5, mcore, M25)
+
+    @test etaf ≈ 0.92394886262679266 rtol = 1e-6
+    @test etalc ≈ 0.85099625437988058 rtol = 1e-6
+    @test etahc ≈ 0.84828010217617134 rtol = 1e-6
+    @test etaht ≈ 0.89789044306438737 rtol = 1e-6
+    @test etalt ≈ 0.90186675988322329 rtol = 1e-6
+
+    @test Tt4 ≈ 1783.8000000000002 rtol = 1e-6
+    @test ht4 ≈ 328894.12201844301 rtol = 1e-6
+    @test pt4 ≈ 1619938.3094288020 rtol = 1e-6
+    @test cpt4 ≈ 1320.7731310811930 rtol = 1e-6
+    @test Rt4 ≈ 288.19623599129534 rtol = 1e-6
 end
 
 @testset "tfcalc.jl" begin

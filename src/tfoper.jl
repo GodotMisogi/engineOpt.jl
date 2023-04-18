@@ -126,7 +126,7 @@
       7  fan nozzle
       8  fan flow downstream
 """
-function tfoper(gee, M0, T0, p0, a0, Tref, pref,
+function tfoper!(gee, M0, T0, p0, a0, Tref, pref,
       Phiinl, Kinl, iBLIc,
       pid, pib, pifn, pitn,
       Gearf,
@@ -145,7 +145,7 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
       Mtexit, dTstrk, StA, efilm, tfilm,
       M4a, ruc,
       ncrowx, ncrow,
-      epsrow,
+      epsrow, Tmrow,
       M2, pif, pilc, pihc, mbf, mblc, mbhc, Tt4, pt5, mcore, M25)
 
       #---- ncrowy must be at least as big as ncrowx defined in index.inc
@@ -807,9 +807,10 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
 
                   if (icool == 1)
                         #------ epsrow(.) is assumed to be passed in.. calculate Tmrow(.)
-                        Tmrow = Tmcalc(ncrowx, ncrow,
+                        Tmrow_copy = Tmcalc(ncrowx, ncrow,
                               Tt3, Tb, dTstrk, Trrat,
                               efilm, tfilm, StA, epsrow)
+                        Tmrow[:] = Tmrow_copy[:]
 
                         #------ total cooling flow fraction
                         fc = 0.0
@@ -828,10 +829,10 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
 
                   else
                         #------ calculate cooling mass flow ratios epsrow(.) to get specified Tmrow(.)
-                        ncrow, epsrow, epsrow_Tt3, epsrow_Tb, epsrow_Trr =
-                              mcool(ncrowx,
-                                    Tmrow, Tt3, Tb, dTstrk, Trrat,
-                                    efilm, tfilm, StA)
+                        ncrow, epsrow_copy, epsrow_Tt3, epsrow_Tb, epsrow_Trr = mcool(ncrowx,
+                              Tmrow, Tt3, Tb, dTstrk, Trrat,
+                              efilm, tfilm, StA)
+                        epsrow[:] = epsrow_copy[:]
 
                         #------ total cooling flow fraction
                         fc = 0.0
@@ -2577,8 +2578,7 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
                   println("Fe =", Feng)
 
                   Lconv = false
-                  return Tmrow,
-                  TSFC, Fsp, hfuel, ff,
+                  return TSFC, Fsp, hfuel, ff,
                   Feng, mcore,
                   pif, pilc, pihc,
                   mbf, mblc, mbhc,
@@ -3043,8 +3043,7 @@ function tfoper(gee, M0, T0, p0, a0, Tref, pref,
                   end
 
                   Lconv = true
-                  return Tmrow,
-                  TSFC, Fsp, hfuel, ff,
+                  return TSFC, Fsp, hfuel, ff,
                   Feng, mcore,
                   pif, pilc, pihc,
                   mbf, mblc, mbhc,

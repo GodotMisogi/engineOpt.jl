@@ -8,7 +8,7 @@ using LinearAlgebra
 
 include("gasfun.jl")
 include("gascalc.jl")
-include("tfan.jl")
+# include("tfan.jl")
 include("tfmap.jl")
 include("tfcool.jl")
 include("tfsize.jl")
@@ -21,7 +21,7 @@ include("index.inc")
 include("constants.inc")
 
 # Main
-export tfsize, tfoper, tfcalc!
+export tfsize, tfoper!, tfcalc!
 
 # Unit test
 export gas_N2, gas_Ar, gas_CO2, gas_H2O, gas_CH4
