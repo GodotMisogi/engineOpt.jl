@@ -111,7 +111,7 @@ model = Model(Ipopt.Optimizer)
 # set_silent(model)
 
 @variable(model, 0.95 <= x <= 1.05, start = 1.0)
-@NLobjective(model, Max, g(x))
+@NLobjective(model, Min, g(x))
 optimize!(model)
 @show value(x)
 
