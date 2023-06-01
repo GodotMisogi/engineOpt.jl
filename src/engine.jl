@@ -6,6 +6,7 @@ import DelimitedFiles
 import ForwardDiff
 using LinearAlgebra
 
+include("engine_data_struct.jl")
 include("gasfun.jl")
 include("gascalc.jl")
 # include("tfan.jl")
