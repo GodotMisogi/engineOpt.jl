@@ -3043,6 +3043,25 @@ function tfoper!(gee, M0, T0, p0, a0, Tref, pref,
                   end
 
                   Lconv = true
+
+                  # Corrected mass flows
+                  mbf = mcore * sqrt(Tt2 / Tref) / (pt2 / pref) * BPR
+                  mblc = mcore * sqrt(Tt19 / Tref) / (pt19 / pref)
+                  mbhc = mcore * sqrt(Tt25 / Tref) / (pt25 / pref) * (1.0 - fo)
+                  mbht = mcore * sqrt(Tt41 / Tref) / (pt41 / pref) * (1.0 - fo + ff)
+                  mblt = mcore * sqrt(Tt45 / Tref) / (pt45 / pref) * (1.0 - fo + ff)
+
+                  # Speed
+                  Nf = 1.0 / Gearf
+                  N1 = 1.0
+                  N2 = 1.0
+
+                  Nbf = Nf / sqrt(Tt2 / Tref)
+                  Nblc = N1 / sqrt(Tt19 / Tref)
+                  Nbhc = N2 / sqrt(Tt25 / Tref)
+                  Nbht = N2 / sqrt(Tt41 / Tref)
+                  Nblt = N1 / sqrt(Tt45 / Tref)
+
                   return TSFC, Fsp, hfuel, ff,
                   Feng, mcore,
                   pif, pilc, pihc,
@@ -3071,6 +3090,8 @@ function tfoper!(gee, M0, T0, p0, a0, Tref, pref,
                   u9, A9,
                   epf, eplc, ephc, epht, eplt,
                   etaf, etalc, etahc, etaht, etalt,
+                  mbf, mblc, mbhc, mbht, mblt,
+                  Nbf, Nblc, Nbhc, Nbht, Nblt,
                   Lconv
 
             end

@@ -22,6 +22,7 @@ function gas_tset(alpha, n, hspec, tguess)
 
       t = tguess
 
+      dt = 0.0
       for iter = 1:itmax
             s, s_t, h, h_t, cp, r = gassum(alpha, n, t)
             res = h - hspec

@@ -573,6 +573,7 @@ end
     a0 = 296.85578884697560
     M2 = 0.59999999999999998
     M25 = 0.59999999999999998
+    Gearf = 1.0
     Feng = 22182.101361240744
     Phiinl = 0.0000000000000000
     Kinl = 0.0000000000000000
@@ -643,7 +644,10 @@ end
     u9, A9, # 108
     epf, eplc, ephc, epht, eplt, # 110
     etaf, etalc, etahc, etaht, etalt, # 115
+    mbf, mblc, mbhc, mbht, mblt,
+    Nbf, Nblc, Nbhc, Nbht, Nblt,
     Lconv = engine.tfsize(gee, M0, T0, p0, a0, M2, M25,
+        Gearf,
         Feng, Phiinl, Kinl, iBLIc,
         BPR, pif, pilc, pihc,
         pid, pib, pifn, pitn,
@@ -856,6 +860,8 @@ end
     u9, A9, # 121
     epf, eplc, ephc, epht, eplt, # 123
     etaf, etalc, etahc, etaht, etalt, # 128
+    mbf, mblc, mbhc, mbht, mblt,
+    Nbf, Nblc, Nbhc, Nbht, Nblt,
     Lconv = engine.tfoper!(gee, M0, T0, p0, a0, Tref, pref,
         Phiinl, Kinl, iBLIc,
         pid, pib, pifn, pitn,

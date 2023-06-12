@@ -59,6 +59,8 @@ mutable struct design_variable_continuous
     Mtexit
     epsrow
 
+    Tmrow
+
 end
 
 
@@ -225,6 +227,7 @@ end
 mutable struct off_design_input
 
     Tt4
+    iTFspec
 
 end
 

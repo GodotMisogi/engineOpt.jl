@@ -9,10 +9,11 @@ using LinearAlgebra
 include("engine_data_struct.jl")
 include("gasfun.jl")
 include("gascalc.jl")
-# include("tfan.jl")
 include("tfmap.jl")
 include("tfcool.jl")
 include("tfsize.jl")
+include("tfsize_wrapper.jl")
+include("tfoper_wrapper.jl")
 include("gaussn.jl")
 include("compare.jl")
 include("tfoper.jl")
@@ -23,6 +24,18 @@ include("constants.inc")
 
 # Main
 export tfsize, tfoper!, tfcalc!
+export tfsize_wrapper!, tfoper_wrapper!
+export design_variable_continuous, design_variable_integer, operation_design_variable
+export station_state_total, station_state_static, station_state_full_engine
+export component_state, component_state_full_engine
+export performance
+export output_full_engine
+export off_design_input
+export engine_variable
+
+
+
+
 
 # Unit test
 export gas_N2, gas_Ar, gas_CO2, gas_H2O, gas_CH4
