@@ -92,7 +92,7 @@ function g(x)
     Lconv = engine.tfsize(gee, M0, T0, p0, a0, M2, M25,
         Gearf,
         Feng, Phiinl, Kinl, iBLIc,
-        BPR, pif, pilc, pihc,
+        BPR, pif, pilc * x, pihc,
         pid, pib, pifn, pitn,
         Ttf, ifuel, etab,
         epf0, eplc0, ephc0, epht0, eplt0,
