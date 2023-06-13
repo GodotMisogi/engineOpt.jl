@@ -1,0 +1,218 @@
+"""
+    Wrapper function for tfoper.jl
+"""
+function tfoper_wrapper!(engine_variable_obj::engine_variable)
+
+    # ---------------
+    # Extract the data
+    # ---------------
+    # Extract continuous design variables
+    gee = 9.81
+
+    Tref = engine_variable_obj.design_variable_continuous_obj.Tref
+    pref = engine_variable_obj.design_variable_continuous_obj.pref
+
+    Gearf = engine_variable_obj.design_variable_continuous_obj.Gearf
+
+    BPR = engine_variable_obj.design_variable_continuous_obj.BPR
+
+    etab = engine_variable_obj.design_variable_continuous_obj.etab
+    epf0 = engine_variable_obj.design_variable_continuous_obj.epf0
+    eplc0 = engine_variable_obj.design_variable_continuous_obj.eplc0
+    ephc0 = engine_variable_obj.design_variable_continuous_obj.ephc0
+    epht0 = engine_variable_obj.design_variable_continuous_obj.epht0
+    eplt0 = engine_variable_obj.design_variable_continuous_obj.eplt0
+    epsl = engine_variable_obj.design_variable_continuous_obj.epsl
+    epsh = engine_variable_obj.design_variable_continuous_obj.epsh
+    pifK = engine_variable_obj.design_variable_continuous_obj.pifK
+    epfK = engine_variable_obj.design_variable_continuous_obj.epfK
+
+    Phiinl = engine_variable_obj.design_variable_continuous_obj.Phiinl
+    Kinl = engine_variable_obj.design_variable_continuous_obj.Kinl
+
+    mofft = engine_variable_obj.design_variable_continuous_obj.mofft
+    Pofft = engine_variable_obj.design_variable_continuous_obj.Pofft
+
+    pid = engine_variable_obj.design_variable_continuous_obj.pid
+    pib = engine_variable_obj.design_variable_continuous_obj.pib
+    pifn = engine_variable_obj.design_variable_continuous_obj.pifn
+    pitn = engine_variable_obj.design_variable_continuous_obj.pitn
+
+    Tt9 = engine_variable_obj.design_variable_continuous_obj.Tt9
+    pt9 = engine_variable_obj.design_variable_continuous_obj.pt9
+
+    Ttf = engine_variable_obj.design_variable_continuous_obj.Ttf
+
+    dTstrk = engine_variable_obj.design_variable_continuous_obj.dTstrk
+    StA = engine_variable_obj.design_variable_continuous_obj.StA
+    efilm = engine_variable_obj.design_variable_continuous_obj.efilm
+    tfilm = engine_variable_obj.design_variable_continuous_obj.tfilm
+    M4a = engine_variable_obj.design_variable_continuous_obj.M4a
+    ruc = engine_variable_obj.design_variable_continuous_obj.ruc
+    Mtexit = engine_variable_obj.design_variable_continuous_obj.Mtexit
+    epsrow = engine_variable_obj.design_variable_continuous_obj.epsrow
+
+    Tmrow = engine_variable_obj.design_variable_continuous_obj.Tmrow
+
+    # Integer design var
+    iBLIc = engine_variable_obj.design_variable_integer_obj.iBLIc
+    ifuel = engine_variable_obj.design_variable_integer_obj.ifuel
+    icool = engine_variable_obj.design_variable_integer_obj.icool
+    ncrowx = engine_variable_obj.design_variable_integer_obj.ncrowx
+    ncrow = engine_variable_obj.design_variable_integer_obj.ncrow
+
+    # Defined by sizing
+    pifD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_f.pratio
+    pilcD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_lc.pratio
+    pihcD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_hc.pratio
+    pihtD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_ht.pratio
+    piltD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_lt.pratio
+
+    mbfD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_f.mb
+    mblcD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_lc.mb
+    mbhcD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_hc.mb
+    mbhtD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_ht.mb
+    mbltD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_lt.mb
+
+    NbfD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_f.Nb
+    NblcD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_lc.Nb
+    NbhcD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_hc.Nb
+    NbhtD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_ht.Nb
+    NbltD = engine_variable_obj.on_design_output_full_engine_obj.component_state_full_engine_obj.state_lt.Nb
+
+    A2 = engine_variable_obj.on_design_output_full_engine_obj.station_state_full_engine_obj.state_2_s.A
+    A25 = engine_variable_obj.on_design_output_full_engine_obj.station_state_full_engine_obj.state_25_s.A
+    A5 = engine_variable_obj.on_design_output_full_engine_obj.station_state_full_engine_obj.state_5_s.A
+    A7 = engine_variable_obj.on_design_output_full_engine_obj.station_state_full_engine_obj.state_7_s.A
+
+    # Flight condition
+    M0 = engine_variable_obj.off_design_operation_design_variable_obj.M0
+    T0 = engine_variable_obj.off_design_operation_design_variable_obj.T0
+    p0 = engine_variable_obj.off_design_operation_design_variable_obj.p0
+    a0 = engine_variable_obj.off_design_operation_design_variable_obj.a0
+
+    # Input
+    Tt4 = engine_variable_obj.off_design_input_obj.Tt4
+    iTFspec = engine_variable_obj.off_design_input_obj.iTFspec
+
+    # Warm-start
+    M2 = engine_variable_obj.design_variable_continuous_obj.M2_D
+    M25 = engine_variable_obj.design_variable_continuous_obj.M25_D
+    pif = pifD
+    pilc = pilcD
+    pihc = pihcD
+    mbf = mbfD
+    mblc = mblcD
+    mbhc = mbhcD
+    pt5 = engine_variable_obj.on_design_output_full_engine_obj.station_state_full_engine_obj.state_5_t.pt
+    mcore = engine_variable_obj.on_design_output_full_engine_obj.performance_obj.mcore
+
+    # ---------------
+    # Run
+    # ---------------
+    TSFC, Fsp, hfuel, ff,
+    Feng, mcore,
+    pif, pilc, pihc,
+    mbf, mblc, mbhc,
+    Nbf, Nblc, Nbhc,
+    Tt0, ht0, pt0, cpt0, Rt0,
+    Tt18, ht18, pt18, cpt18, Rt18,
+    Tt19, ht19, pt19, cpt19, Rt19,
+    Tt2, ht2, pt2, cpt2, Rt2,
+    Tt21, ht21, pt21, cpt21, Rt21,
+    Tt25, ht25, pt25, cpt25, Rt25,
+    Tt3, ht3, pt3, cpt3, Rt3,
+    Tt4, ht4, pt4, cpt4, Rt4,
+    Tt41, ht41, pt41, cpt41, Rt41,
+    Tt45, ht45, pt45, cpt45, Rt45,
+    Tt49, ht49, pt49, cpt49, Rt49,
+    Tt5, ht5, pt5, cpt5, Rt5,
+    Tt7, ht7, pt7, cpt7, Rt7,
+    u0,
+    T2, u2, p2, cp2, R2, M2,
+    T25, u25, p25, cp25, R25, M25,
+    T5, u5, p5, cp5, R5, M5,
+    T6, u6, p6, cp6, R6, M6, A6,
+    T7, u7, p7, cp7, R7, M7,
+    T8, u8, p8, cp8, R8, M8, A8,
+    u9, A9,
+    epf, eplc, ephc, epht, eplt,
+    etaf, etalc, etahc, etaht, etalt,
+    mbf, mblc, mbhc, mbht, mblt,
+    Nbf, Nblc, Nbhc, Nbht, Nblt,
+    Lconv = tfoper!(gee, M0, T0, p0, a0, Tref, pref,
+        Phiinl, Kinl, iBLIc,
+        pid, pib, pifn, pitn,
+        Gearf,
+        pifD, pilcD, pihcD, pihtD, piltD,
+        mbfD, mblcD, mbhcD, mbhtD, mbltD,
+        NbfD, NblcD, NbhcD, NbhtD, NbltD,
+        A2, A25, A5, A7,
+        iTFspec,
+        Ttf, ifuel, etab,
+        epf0, eplc0, ephc0, epht0, eplt0,
+        pifK, epfK,
+        mofft, Pofft,
+        Tt9, pt9,
+        epsl, epsh,
+        icool,
+        Mtexit, dTstrk, StA, efilm, tfilm,
+        M4a, ruc,
+        ncrowx, ncrow,
+        epsrow, Tmrow,
+        M2, pif, pilc, pihc, mbf, mblc, mbhc, Tt4, pt5, mcore, M25)
+
+    # ---------------
+    # Fill in data
+    # ---------------
+
+
+
+    # Station states
+    # Total
+    state_0_t = engine.station_state_total(u0, Tt0, ht0, pt0, cpt0, Rt0)
+    state_18_t = engine.station_state_total(nothing, Tt18, ht18, pt18, cpt18, Rt18)
+    state_19_t = engine.station_state_total(nothing, Tt19, ht19, pt19, cpt19, Rt19)
+    state_2_t = engine.station_state_total(nothing, Tt2, ht2, pt2, cpt2, Rt2)
+    state_21_t = engine.station_state_total(nothing, Tt21, ht21, pt21, cpt21, Rt21)
+    state_25_t = engine.station_state_total(nothing, Tt25, ht25, pt25, cpt25, Rt25)
+    state_3_t = engine.station_state_total(nothing, Tt3, ht3, pt3, cpt3, Rt3)
+    state_4_t = engine.station_state_total(nothing, Tt4, ht4, pt4, cpt4, Rt4)
+    state_41_t = engine.station_state_total(nothing, Tt41, ht41, pt41, cpt41, Rt41)
+    state_45_t = engine.station_state_total(nothing, Tt45, ht45, pt45, cpt45, Rt45)
+    state_49_t = engine.station_state_total(nothing, Tt49, ht49, pt49, cpt49, Rt49)
+    state_5_t = engine.station_state_total(nothing, Tt5, ht5, pt5, cpt5, Rt5)
+    state_7_t = engine.station_state_total(nothing, Tt7, ht7, pt7, cpt7, Rt7)
+
+    # Static
+    state_2_s = engine.station_state_static(u2, nothing, T2, nothing, p2, cp2, R2, nothing)
+    state_25_s = engine.station_state_static(u25, nothing, T25, nothing, p25, cp25, R25, nothing)
+    state_5_s = engine.station_state_static(u5, M5, T5, nothing, p5, cp5, R5, nothing)
+    state_6_s = engine.station_state_static(u6, M6, T6, nothing, p6, cp6, R6, A6)
+    state_7_s = engine.station_state_static(u7, M7, T7, nothing, p7, cp7, R7, nothing)
+    state_8_s = engine.station_state_static(u8, M8, T8, nothing, p8, cp8, R8, A8)
+    state_9_s = engine.station_state_static(u9, nothing, nothing, nothing, nothing, nothing, nothing, A9)
+
+    off_design_station_state_full_engine_obj = engine.station_state_full_engine(state_0_t, state_18_t, state_19_t, state_2_t, state_21_t, state_25_t,
+        state_3_t, state_4_t, state_41_t, state_45_t, state_49_t, state_5_t, state_7_t,
+        state_2_s, state_25_s, state_5_s, state_6_s, state_7_s, state_8_s, state_9_s,
+        Tmrow)
+
+    # Component state
+    state_f = engine.component_state(epf, etaf, mbf, Nbf, pif)
+    state_lc = engine.component_state(eplc, etalc, mblc, Nblc, pilc)
+    state_hc = engine.component_state(ephc, etahc, mbhc, Nbhc, pihc)
+    state_ht = engine.component_state(epht, etaht, mbht, Nbht, pt41 / pt45)
+    state_lt = engine.component_state(eplt, etalt, mblt, Nblt, pt45 / pt49)
+
+    off_design_component_state_full_engine_obj = engine.component_state_full_engine(state_f, state_lc, state_hc, state_ht, state_lt)
+
+    # Performance variable
+    off_design_performance_obj = engine.performance(TSFC, Fsp, hfuel, ff, mcore, Feng)
+
+    # Form the state var
+    off_design_output_full_engine_obj = engine.output_full_engine(off_design_station_state_full_engine_obj, off_design_component_state_full_engine_obj, off_design_performance_obj)
+
+    engine_variable_obj.off_design_output_full_engine_obj = off_design_output_full_engine_obj
+
+end

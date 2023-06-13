@@ -1,9 +1,10 @@
 using Pkg
 Pkg.activate("../")
-
+using engine
 using Test
 using DelimitedFiles
-using engine
+using JuMP
+using Ipopt
 
 isGradient = false
 
@@ -573,6 +574,7 @@ end
     a0 = 296.85578884697560
     M2 = 0.59999999999999998
     M25 = 0.59999999999999998
+    Gearf = 1.0
     Feng = 22182.101361240744
     Phiinl = 0.0000000000000000
     Kinl = 0.0000000000000000
@@ -643,7 +645,10 @@ end
     u9, A9, # 108
     epf, eplc, ephc, epht, eplt, # 110
     etaf, etalc, etahc, etaht, etalt, # 115
+    mbf, mblc, mbhc, mbht, mblt,
+    Nbf, Nblc, Nbhc, Nbht, Nblt,
     Lconv = engine.tfsize(gee, M0, T0, p0, a0, M2, M25,
+        Gearf,
         Feng, Phiinl, Kinl, iBLIc,
         BPR, pif, pilc, pihc,
         pid, pib, pifn, pitn,
@@ -856,6 +861,8 @@ end
     u9, A9, # 121
     epf, eplc, ephc, epht, eplt, # 123
     etaf, etalc, etahc, etaht, etalt, # 128
+    mbf, mblc, mbhc, mbht, mblt,
+    Nbf, Nblc, Nbhc, Nbht, Nblt,
     Lconv = engine.tfoper!(gee, M0, T0, p0, a0, Tref, pref,
         Phiinl, Kinl, iBLIc,
         pid, pib, pifn, pitn,
@@ -1104,5 +1111,190 @@ end
     @test Wnac ≈ 9411.055803345604 rtol = 1e-10
     @test Webare ≈ 30161.446412552305 rtol = 1e-10
     @test Snace1 ≈ 24.374719583103083 rtol = 1e-10
+
+end
+
+@testset "optimize tfsize" begin
+    function compute_TSFC(x, y, z)
+        # =====================================
+        # On design sizing
+        # =====================================
+
+        # -------------------------------------
+        # Design variable (continuous)
+        # -------------------------------------
+
+        # Reference value
+        Tref = 288.19999999999999
+        pref = 101320.00000000000
+
+        # Gear ratio
+        Gearf = 1.0000000000000000
+
+        # Combustion temperature
+        Tt4 = 1587.0000000000000
+        # Required thrust
+        Feng = 22182.101361240744
+        # By-pass ratio
+        BPR = 5.0999999999999996
+        # Efficiencies and related par
+        etab = 0.98499999999999999
+        epf0 = 0.89480000000000004
+        eplc0 = 0.88000000000000000
+        ephc0 = 0.87000000000000000
+        epht0 = 0.88900000000000001
+        eplt0 = 0.89900000000000002
+        epsl = 1.0000000000000000E-002
+        epsh = 2.1999999999999999E-002
+        pifK = 1.6850000000000001
+        epfK = -7.6999999999999999E-002
+        # inlet
+        Phiinl = 0.0000000000000000
+        Kinl = 0.0000000000000000
+        # Station 2.5 off take (bleeding flow)
+        mofft = 0.56969999999999998
+        # Pofft = 89407.867373646965
+        Pofft = 77800.595231538944
+        # Pressure ratios
+        pid = 0.99800000000000000
+        pib = 0.93999999999999995
+        pifn = 0.97999999999999998
+        pitn = 0.98899999999999999
+        pif_D = 1.6850000000000001 * x
+        # pilc_D = 8.0000000000000000
+        pilc_D = 8.0000000000000000 * y
+        pihc_D = 3.7500000000000000 * z
+        # Mach
+        M2_D = 0.59999999999999998
+        M25_D = 0.59999999999999998
+        # Exit
+        Tt9 = 300.00000000000000
+        pt9 = 30000.000000000000
+        # Fuel 
+        Ttf = 280.00000000000000
+        # Cooling 
+        dTstrk = 200.00000000000000
+        StA = 8.9999999999999997E-002
+        efilm = 0.69999999999999996
+        tfilm = 0.29999999999999999
+        M4a = 0.90000000000000002
+        ruc = 0.14999999999999999
+        Mtexit = 1.0000000000000000
+        # epsrow = [0.12811308404512714, 5.4411331284501797E-002, 1.5791188045605239E-002, 0.0000000000000000]
+        epsrow = [0.12061791584226822, 5.1292591721870069E-002, 1.5478853228971187E-002, 0.0000000000000000]
+        Tmrow = [1000.0, 1000.0, 1000.0, 1000.0]
+
+        design_variable_continuous_obj = engine.design_variable_continuous(
+            Tref,
+            pref,
+            Gearf,
+            Tt4,
+            Feng,
+            BPR,
+            etab,
+            epf0,
+            eplc0,
+            ephc0,
+            epht0,
+            eplt0,
+            epsl,
+            epsh,
+            pifK,
+            epfK,
+            Phiinl,
+            Kinl,
+            mofft,
+            Pofft,
+            pid,
+            pib,
+            pifn,
+            pitn,
+            pif_D,
+            pilc_D,
+            pihc_D,
+            M2_D,
+            M25_D,
+            Tt9,
+            pt9,
+            Ttf,
+            dTstrk,
+            StA,
+            efilm,
+            tfilm,
+            M4a,
+            ruc,
+            Mtexit,
+            epsrow,
+            Tmrow)
+
+        # -------------------------------------
+        # integer design variable
+        # -------------------------------------
+        # Bleeding flow
+        iBLIc = 0
+        # Fuel
+        ifuel = 24
+        # Cooling
+        icool = 1
+        ncrowx = 4
+        ncrow = 4
+
+        design_variable_integer_obj = engine.design_variable_integer(iBLIc, ifuel, icool, ncrowx, ncrow)
+
+        # -------------------------------------
+        # Mission variable
+        # -------------------------------------
+        M0 = 0.80000000000000004
+        T0 = 219.43067572699252
+        p0 = 23922.608843328788
+        a0 = 296.85578884697560
+
+        on_design_operation_design_variable_obj = engine.operation_design_variable(M0, T0, p0, a0)
+
+        # -------------------------------------
+        #  Construct engine
+        # -------------------------------------
+
+        # Construct the engine object
+        # It is composed of the design variables (continuous/integer), the operation condition, and the design and off-design state variables.
+        engine_variable_obj = engine.engine_variable()
+
+        engine_variable_obj.design_variable_continuous_obj = design_variable_continuous_obj
+        engine_variable_obj.design_variable_integer_obj = design_variable_integer_obj
+        engine_variable_obj.on_design_operation_design_variable_obj = on_design_operation_design_variable_obj
+
+        engine.tfsize_wrapper!(engine_variable_obj)
+
+        return engine_variable_obj.on_design_output_full_engine_obj.performance_obj.TSFC
+    end
+
+    # Construct the model
+    model = Model(Ipopt.Optimizer)
+    set_silent(model)
+
+    # Add variables
+    # x: fan pressure ratio
+    # y: LPC pressure ratio
+    # z: HPC pressure ratio
+    @variable(model, 0.8 <= x <= 1.2, start = 1.0)
+    @variable(model, 0.8 <= y <= 1.2, start = 1.0)
+    @variable(model, 0.8 <= z <= 1.2, start = 1.0)
+
+    # Add constraint: non-increasing total pressure ratio
+    @NLconstraint(model, c1, x * y * z <= 1.0)
+
+    # Add objective function: TSFC
+    @NLobjective(model, Min, compute_TSFC(x, y, z))
+
+    # Optimize
+    optimize!(model)
+
+    x_opt = value(x)
+    y_opt = value(y)
+    z_opt = value(z)
+
+    @test x_opt ≈ 1.0900238803485958 rtol = 1e-4
+    @test y_opt ≈ 0.8000205069073189 rtol = 1e-4
+    @test z_opt ≈ 1.1467338222855326 rtol = 1e-4
 
 end

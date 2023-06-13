@@ -17,6 +17,7 @@ function tfsize_wrapper(x)
     a0 = 296.85578884697560
     M2 = 0.59999999999999998
     M25 = 0.59999999999999998
+    Gearf = 1.0
     Feng = 22182.101361240744
     Phiinl = 0.0000000000000000
     Kinl = 0.0000000000000000
@@ -87,7 +88,10 @@ function tfsize_wrapper(x)
     u9, A9, # 108
     epf, eplc, ephc, epht, eplt, # 110
     etaf, etalc, etahc, etaht, etalt, # 115
+    mbf, mblc, mbhc, mbht, mblt,
+    Nbf, Nblc, Nbhc, Nbht, Nblt,
     Lconv = engine.tfsize(gee * x, M0 * x, T0 * x, p0 * x, a0 * x, M2 * x, M25 * x,
+        Gearf,
         Feng * x, Phiinl * x, Kinl * x, iBLIc,
         BPR * x, pif * x, pilc * x, pihc * x,
         pid * x, pib * x, pifn * x, pitn * x,
@@ -177,6 +181,7 @@ function tfoper_wrapper(x)
     ncrowx = 4
     ncrow = 4
     epsrow3 = [0.12061791584226822, 5.1292591721870069E-002, 1.5478853228971187E-002, 0.0000000000000000]
+    Tmrow3 = [1000.0, 1000.0, 1000.0, 1000.0]
 
     M2 = 1.0
     pif = 0.0000000000000000
@@ -219,7 +224,7 @@ function tfoper_wrapper(x)
     u9, A9, # 121
     epf, eplc, ephc, epht, eplt, # 123
     etaf, etalc, etahc, etaht, etalt, # 128
-    Lconv = engine.tfoper(gee * x, M0 * x, T0 * x, p0 * x, a0 * x, Tref * x, pref * x,
+    Lconv = engine.tfoper!(gee * x, M0 * x, T0 * x, p0 * x, a0 * x, Tref * x, pref * x,
         Phiinl * x, Kinl * x, iBLIc * x,
         pid * x, pib * x, pifn * x, pitn * x,
         Gearf * x,
@@ -238,7 +243,7 @@ function tfoper_wrapper(x)
         Mtexit * x, dTstrk * x, StA * x, efilm * x, tfilm * x,
         M4a * x, ruc * x,
         ncrowx, ncrow,
-        epsrow3 * x,
+        epsrow3 * x, Tmrow3 * x,
         M2 * x, pif * x, pilc * x, pihc * x, mbf * x, mblc * x, mbhc * x, Tt4 * x, pt5 * x, mcore * x, M25 * x)
 
     return TSFC

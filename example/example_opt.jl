@@ -10,6 +10,7 @@ import Ipopt
 function g(x)
 
     gee = 9.8100000000000005
+    Gearf = 1.0
     M0 = 0.80000000000000004
     T0 = 219.43067572699252
     p0 = 23922.608843328788
@@ -86,9 +87,12 @@ function g(x)
     u9, A9, # 108
     epf, eplc, ephc, epht, eplt, # 110
     etaf, etalc, etahc, etaht, etalt, # 115
+    mbf, mblc, mbhc, mbht, mblt,
+    Nbf, Nblc, Nbhc, Nbht, Nblt,
     Lconv = engine.tfsize(gee, M0, T0, p0, a0, M2, M25,
+        Gearf,
         Feng, Phiinl, Kinl, iBLIc,
-        BPR, pif, pilc, pihc * x,
+        BPR, pif, pilc * x, pihc,
         pid, pib, pifn, pitn,
         Ttf, ifuel, etab,
         epf0, eplc0, ephc0, epht0, eplt0,
