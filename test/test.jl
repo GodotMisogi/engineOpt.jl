@@ -1115,7 +1115,7 @@ end
 end
 
 @testset "optimize tfsize" begin
-    function compute_TSFC(x_plc)
+    function compute_TSFC(x, y, z)
         # =====================================
         # On design sizing
         # =====================================
@@ -1160,10 +1160,10 @@ end
         pib = 0.93999999999999995
         pifn = 0.97999999999999998
         pitn = 0.98899999999999999
-        pif_D = 1.6850000000000001
+        pif_D = 1.6850000000000001 * x
         # pilc_D = 8.0000000000000000
-        pilc_D = 8.0000000000000000 * x_plc
-        pihc_D = 3.7500000000000000
+        pilc_D = 8.0000000000000000 * y
+        pihc_D = 3.7500000000000000 * z
         # Mach
         M2_D = 0.59999999999999998
         M25_D = 0.59999999999999998
@@ -1268,17 +1268,33 @@ end
         return engine_variable_obj.on_design_output_full_engine_obj.performance_obj.TSFC
     end
 
-
-    # compute_TSFC(1.0)
-
+    # Construct the model
     model = Model(Ipopt.Optimizer)
     set_silent(model)
-    @variable(model, 0.95 <= x_plc <= 1.05, start = 1.0)
-    @NLobjective(model, Min, compute_TSFC(x_plc))
-    optimize!(model)
-    x_plc_opt = value(x_plc)
-    println(typeof(x_plc_opt))
 
-    @test x_plc_opt ≈ 1.0498950738270452 rtol = 1e-4
+    # Add variables
+    # x: fan pressure ratio
+    # y: LPC pressure ratio
+    # z: HPC pressure ratio
+    @variable(model, 0.8 <= x <= 1.2, start = 1.0)
+    @variable(model, 0.8 <= y <= 1.2, start = 1.0)
+    @variable(model, 0.8 <= z <= 1.2, start = 1.0)
+
+    # Add constraint: non-increasing total pressure ratio
+    @NLconstraint(model, c1, x * y * z <= 1.0)
+
+    # Add objective function: TSFC
+    @NLobjective(model, Min, compute_TSFC(x, y, z))
+
+    # Optimize
+    optimize!(model)
+
+    x_opt = value(x)
+    y_opt = value(y)
+    z_opt = value(z)
+
+    @test x_opt ≈ 1.0900238803485958 rtol = 1e-4
+    @test y_opt ≈ 0.8000205069073189 rtol = 1e-4
+    @test z_opt ≈ 1.1467338222855326 rtol = 1e-4
 
 end
